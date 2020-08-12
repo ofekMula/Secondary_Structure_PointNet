@@ -83,7 +83,8 @@ for i,room_name in enumerate(room_filelist):
         test_idxs.append(i)
     else:
         train_idxs.append(i)
-
+train_idxs = train_idxs[0:1000]
+test_idxs = train_idxs
 train_data = data_batches[train_idxs,...]
 train_label = label_batches[train_idxs]
 test_data = data_batches[test_idxs,...]
@@ -202,14 +203,13 @@ def train_one_epoch(sess, ops, train_writer):
     
     file_size = current_data.shape[0]
     num_batches = file_size // BATCH_SIZE
-    
+    num_batches = 2
     total_correct = 0
     total_seen = 0
     loss_sum = 0
     
     for batch_idx in range(num_batches):
-        if batch_idx % 100 == 0:
-            print('Current batch/total batch num: %d/%d'%(batch_idx,num_batches))
+        print('Current batch/total batch num: %d/%d'%(batch_idx,num_batches))
         start_idx = batch_idx * BATCH_SIZE
         end_idx = (batch_idx+1) * BATCH_SIZE
         
@@ -244,8 +244,9 @@ def eval_one_epoch(sess, ops, test_writer):
     
     file_size = current_data.shape[0]
     num_batches = file_size // BATCH_SIZE
-    
+    num_batches = 2
     for batch_idx in range(num_batches):
+        print('Current batch/total batch num: %d/%d'%(batch_idx,num_batches))
         start_idx = batch_idx * BATCH_SIZE
         end_idx = (batch_idx+1) * BATCH_SIZE
 
