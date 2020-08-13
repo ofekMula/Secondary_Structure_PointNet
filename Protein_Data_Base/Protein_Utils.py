@@ -1,3 +1,4 @@
+from Protein_Data_Base import sample_code
 import os
 from Bio.PDB.DSSP import DSSP
 import Bio.PDB
@@ -6,6 +7,8 @@ from Bio.PDB import *
 
 ##We get a protein like "1a09", a chain number like 'A'.
 ##That we download the pdb file & parse it.
+
+
 def download_and_parse_pdb(pdb_name, num_chain):
     print ("parsing_file:", pdb_name, num_chain)
     parser = PDBParser()
