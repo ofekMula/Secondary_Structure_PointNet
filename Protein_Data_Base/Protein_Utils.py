@@ -1,4 +1,3 @@
-import sample_code
 import os
 from Bio.PDB.DSSP import DSSP
 import Bio.PDB
