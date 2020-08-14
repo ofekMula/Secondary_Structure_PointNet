@@ -84,7 +84,7 @@ for i,room_name in enumerate(room_filelist):
     else:
         train_idxs.append(i)
 train_idxs = train_idxs[0:1000]
-test_idxs = train_idxs
+test_idxs = test_idxs[0:1000]
 train_data = data_batches[train_idxs,...]
 train_label = label_batches[train_idxs]
 test_data = data_batches[test_idxs,...]
