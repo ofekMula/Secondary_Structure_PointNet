@@ -16,7 +16,7 @@ if not os.path.exists(os.path.join(DATA_DIR, 'modelnet40_ply_hdf5_2048')):
     os.system('mv %s %s' % (zipfile[:-4], DATA_DIR))
     os.system('rm %s' % (zipfile))
 
-
+### should work well with np arrays
 def shuffle_data(data, labels):
     """ Shuffle data and labels.
         Input:
@@ -83,19 +83,19 @@ def jitter_point_cloud(batch_data, sigma=0.01, clip=0.05):
     jittered_data = np.clip(sigma * np.random.randn(B, N, C), -1*clip, clip)
     jittered_data += batch_data
     return jittered_data
-
+###might work the same
 def getDataFiles(list_filename):
     return [line.rstrip() for line in open(list_filename)]
-
+###need to make adjusments - load just np file
 def load_h5(h5_filename):
     f = h5py.File(h5_filename)
     data = f['data'][:]
     label = f['label'][:]
     return (data, label)
-
+###need to make adjusments - load just np file
 def loadDataFile(filename):
     return load_h5(filename)
-
+###need to make adjusments - load just np file
 def load_h5_data_label_seg(h5_filename):
     f = h5py.File(h5_filename)
     data = f['data'][:]
@@ -103,6 +103,6 @@ def load_h5_data_label_seg(h5_filename):
     seg = f['pid'][:]
     return (data, label, seg)
 
-
+###need to make adjusments - load just np file
 def loadDataFile_with_seg(filename):
     return load_h5_data_label_seg(filename)
