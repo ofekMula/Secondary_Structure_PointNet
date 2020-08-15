@@ -49,8 +49,8 @@ os.system('cp train.py %s' % (LOG_DIR)) # bkp of train procedure
 LOG_FOUT = open(os.path.join(LOG_DIR, 'log_train.txt'), 'w')
 LOG_FOUT.write(str(FLAGS)+'\n')
 
-MAX_NUM_POINT = 4096
-NUM_CLASSES = 13
+MAX_NUM_POINT = 4096 ### do we need any adaptation for our structure of points in each protein?
+NUM_CLASSES = 13 ### need to fit for our caser
 
 BN_INIT_DECAY = 0.5
 BN_DECAY_DECAY_RATE = 0.5
@@ -60,14 +60,18 @@ BN_DECAY_CLIP = 0.99
 
 HOSTNAME = socket.gethostname()
 
-ALL_FILES = provider.getDataFiles('indoor3d_sem_seg_hdf5_data/all_files.txt')
+'''
+we can divide the db for Areas, and each area will containe Proteins(=rooms) ,
+each protein contains amino acid ( = object in a room),each object is a set of atoms(=point clouds)
+'''
+ALL_FILES = provider.getDataFiles('indoor3d_sem_seg_hdf5_data/all_files.txt') ###need to change getDataFiles method
 room_filelist = [line.rstrip() for line in open('indoor3d_sem_seg_hdf5_data/room_filelist.txt')]
 
 # Load ALL data
 data_batch_list = []
 label_batch_list = []
 for h5_filename in ALL_FILES:
-    data_batch, label_batch = provider.loadDataFile(h5_filename)
+    data_batch, label_batch = provider.loadDataFile(h5_filename)### instead of h5 file, we will use protein.npy file
     data_batch_list.append(data_batch)
     label_batch_list.append(label_batch)
 data_batches = np.concatenate(data_batch_list, 0)
@@ -100,7 +104,7 @@ def log_string(out_str):
     LOG_FOUT.flush()
     print(out_str)
 
-
+### after the adaptations , in this stage i don't think we need to change something here.
 def get_learning_rate(batch):
     learning_rate = tf.train.exponential_decay(
                         BASE_LEARNING_RATE,  # Base learning rate.
