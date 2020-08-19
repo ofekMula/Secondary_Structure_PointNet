@@ -128,18 +128,21 @@ def get_bn_decay(batch):
 def train():
     with tf.Graph().as_default():
         with tf.device('/gpu:'+str(GPU_INDEX)):
-            pointclouds_pl, labels_pl = placeholder_inputs(BATCH_SIZE, NUM_POINT)
+            # pointclouds_pl size: batch_size x num_point x 9
+            # labels_pl size: batch_size x num_point
+            pointclouds_pl, labels_pl = placeholder_inputs(BATCH_SIZE, NUM_POINT) # in model.py
             is_training_pl = tf.placeholder(tf.bool, shape=())
             
             # Note the global_step=batch parameter to minimize. 
             # That tells the optimizer to helpfully increment the 'batch' parameter for you every time it trains.
-            batch = tf.Variable(0)
-            bn_decay = get_bn_decay(batch)
+            batch = tf.Variable(0)  # constructor of a tensor
+            bn_decay = get_bn_decay(batch)  # No hard coding :)
             tf.summary.scalar('bn_decay', bn_decay)
 
+            # why do we do convolution on empty tensor
             # Get model and loss 
-            pred = get_model(pointclouds_pl, is_training_pl, bn_decay=bn_decay)
-            loss = get_loss(pred, labels_pl)
+            pred = get_model(pointclouds_pl, is_training_pl, bn_decay=bn_decay)  # model.py (hard coded)
+            loss = get_loss(pred, labels_pl)  # model.py (not hard coded :))
             tf.summary.scalar('loss', loss)
 
             correct = tf.equal(tf.argmax(pred, 2), tf.to_int64(labels_pl))
@@ -223,7 +226,7 @@ def train_one_epoch(sess, ops, train_writer):
         summary, step, _, loss_val, pred_val = sess.run([ops['merged'], ops['step'], ops['train_op'], ops['loss'], ops['pred']],
                                          feed_dict=feed_dict)
         train_writer.add_summary(summary, step)
-        pred_val = np.argmax(pred_val, 2)
+        pred_val = np.argmax(pred_val, 2) # how to
         correct = np.sum(pred_val == current_label[start_idx:end_idx])
         total_correct += correct
         total_seen += (BATCH_SIZE*NUM_POINT)
