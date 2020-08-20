@@ -210,7 +210,7 @@ def train_one_epoch(sess, ops, train_writer):
     
     file_size = current_data.shape[0]
     num_batches = file_size // BATCH_SIZE
-    num_batches = 2
+    num_batches = 2 ###added only for slicing training time. will be deleted later
     total_correct = 0
     total_seen = 0
     loss_sum = 0
@@ -251,7 +251,7 @@ def eval_one_epoch(sess, ops, test_writer):
     
     file_size = current_data.shape[0]
     num_batches = file_size // BATCH_SIZE
-    num_batches = 2
+    num_batches = 2 ###added only for slicing training time. will be deleted later
     for batch_idx in range(num_batches):
         print('Current batch/total batch num: %d/%d'%(batch_idx,num_batches))
         start_idx = batch_idx * BATCH_SIZE
