@@ -2,7 +2,7 @@ import numpy as np
 import glob
 import os
 import sys
-from Protein_Data_Base import sample_code
+import sample_code
 import os
 # from Bio.PDB.DSSP import DSSP
 import Bio.PDB
@@ -54,7 +54,7 @@ def download_and_parse_pdb(pdb_name, num_chain):
     pdbl = PDBList()
 
     #  Downloading the file
-    path = "/specific/netapp5_2/iscb/wolfson/yarinluhmany/v_env/dssp-master"
+    path = "/specific/netapp5_2/iscb/wolfson/ofekm/v_env/dssp-master"
     file_name = pdbl.retrieve_pdb_file(pdb_code=pdb_name, file_format="pdb", pdir=path)
     new_name = path + '/' + pdb_name + '.pdb'
     os.rename(file_name, new_name)
@@ -81,7 +81,10 @@ def download_and_parse_pdb(pdb_name, num_chain):
 #  create a num_py array of [x,y,z] coordinates for all atoms.
 def list_of_residue_coordinates_and_residue_seq(chain_prot):
     res = sample_code.process_chain(chain_prot)
-    return res[0], res[1]
+    seq = res[0]
+    backbone = res[1]
+    res = np.array([c[2] for c in backbone])
+    return seq, res
 
 
 # create a string of secondary structure for each residue.
@@ -106,10 +109,10 @@ def list_of_residue_labels(pdb_name, structure, num_chain, chain_prot):
                 if residue.get_id()[1] == residue_number:
                     secondary_struct += secondary_structure_of_residue
                     if secondary_structure_of_residue in label_dict:
-                        label_array = np.array(label_array, label_dict[secondary_structure_of_residue])  # label
+                        label_array = np.append(label_array, label_dict[secondary_structure_of_residue])  # label
                     # every position in the array corresponds to residue coordinates in the same position
                     else:
-                        label_array = np.array(label_array, label_dict['-'])
+                        label_array = np.append(label_array, label_dict['-'])
                     break
 
     return secondary_struct, label_array
@@ -198,10 +201,25 @@ def normalize_full_attributes(list_residues_sequence, list_residues_coord):
 
 
 if __name__ == "__main__":
-    protein_file_name = 'Area_1/11as_A/Protein'
+    #protein_file_name = 'Area_1/11as_A/Protein'
     structure, chain_prot = download_and_parse_pdb("11as", 'A')
     list_of_residues, list_residue_coord = list_of_residue_coordinates_and_residue_seq(chain_prot)
-    print(list_of_residues + " " + list_residue_coord)
+    print("SEQ LEN = ", len(list_of_residues))
+    print(list_of_residues)
+    print("COORD LEN = ", len(list_residue_coord))
+    print(list_residue_coord)
+    norm_coord = normalize_coordinates(list_residue_coord)
+    print ("NORM COORD LEN =", len(norm_coord))
+    print(norm_coord)
+    full = normalize_full_attributes(list_of_residues, list_residue_coord)
+    print("FULL LEN = ", len(full))
+    print(full)
+    print(full.shape)
+    sec_struct, list_of_colors = list_of_residue_labels("11as", structure, 'A', chain_prot)
+    print("COLORS LEN = ", len(list_of_colors))
+    print(sec_struct)
+    print(list_of_colors)
+
     # list_of_atoms = list_of_atom_coordinates(chain_prot)
     # print(list_of_atoms, "\nlen = ", len(list_of_atoms))
     # list_of_colors, colors_arr = list_of_atom_colors("11as", structure, 'A', chain_prot)
@@ -209,6 +227,3 @@ if __name__ == "__main__":
     #
     # cord_color_arr = create_cord_color_array(list_of_atoms, colors_arr)
     # save_to_numpy_file(protein_file_name, cord_color_arr)
-
-
-
