@@ -65,7 +65,7 @@ def download_and_parse_pdb(pdb_name, num_chain):
     pdbl = PDBList()
 
     #  Downloading the file
-    path = "/specific/netapp5_2/iscb/wolfson/yarinluhmany/v_env/dssp-master"
+    path = "./"
     file_name = pdbl.retrieve_pdb_file(pdb_code=pdb_name, file_format="pdb", pdir=path)
     new_name = path + '/' + pdb_name + '.pdb'
     os.rename(file_name, new_name)
@@ -204,11 +204,11 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
         list_coord, list_lables = fill_arrays_to_num_points(full, list_of_lables)
         out_file_name = save_to_numpy_file(protein_file_name, list_coord, '_data') + '.npy'
         os.rename(out_file_name,
-                  "/specific/netapp5_2/iscb/wolfson/yarinluhmany/v_env/dssp-master/Proteins_Info/"
+                  "./Proteins_Info/"
                   + pdb_name + '_' + num_chain + '_data.npy')
         out_file_name = save_to_numpy_file(protein_file_name, list_lables, '_lable') + '.npy'
         os.rename(out_file_name,
-                  "/specific/netapp5_2/iscb/wolfson/yarinluhmany/v_env/dssp-master/Proteins_Info/"
+                  "./Proteins_Info/"
                   + pdb_name + '_' + num_chain + '_lable.npy')
 
         os.remove(pdb_name + ".pdb")
