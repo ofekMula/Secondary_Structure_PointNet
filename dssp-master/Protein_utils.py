@@ -68,6 +68,8 @@ def download_and_parse_pdb(pdb_name, num_chain):
     path = "./"
     file_name = pdbl.retrieve_pdb_file(pdb_code=pdb_name, file_format="pdb", pdir=path)
     new_name = path + '/' + pdb_name + '.pdb'
+    if (not os.path.isfile(file_name)):
+      return -1, -1
     os.rename(file_name, new_name)
     file_data_name = pdb_name + '.pdb'
 
@@ -190,9 +192,11 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
         print("NAME = ", pdb_name, "CHAIN = ", num_chain)
 
         ##Now creating the file
-        os.mkdir("./Proteins_Info/" + pdb_name + "_" + num_chain)
         protein_file_name = 'Area_1/' + pdb_name + '_' + num_chain + '/Protein'
         structure, chain_prot = download_and_parse_pdb(pdb_name, num_chain)
+        if (isinstance(structure, int)):
+          print("ERROR: pdb not found")
+          continue
         list_of_residues, list_residue_coord = list_of_residue_coordinates_and_residue_seq(chain_prot)
         full = normalize_full_attributes(list_of_residues, list_residue_coord)
         _, list_of_labels = list_of_residue_labels(pdb_name, structure, num_chain, chain_prot)
@@ -200,6 +204,7 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
         if (list_coord.shape[0] == 0 or list_labels.shape[0] == 0):
           os.remove(pdb_name + ".pdb")
           continue
+        os.mkdir("./Proteins_Info/" + pdb_name + "_" + num_chain)
         out_file_name = save_to_numpy_file(protein_file_name, list_coord, '_data') + '.npy'
         os.rename(out_file_name,
                   "./Proteins_Info/" + pdb_name + "_" + num_chain + "/"
@@ -211,6 +216,8 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
 
         os.remove(pdb_name + ".pdb")
         number_of_structures += 1
+        if (number_of_structures % 10 == 0):
+          print("num structures:", number_of_structures)
 
 
 # Gets list_coord(327X9) and list_labels(327) numpy.
@@ -238,3 +245,4 @@ def fill_arrays_to_num_points(list_coord, list_labels):
 
 if __name__ == "__main__":
     save_numpy_files_from_proteins("list_pdbs.txt", 500)
+
