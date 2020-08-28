@@ -117,12 +117,6 @@ def list_of_residue_labels(pdb_name, structure, num_chain, chain_prot):
     return secondary_struct, label_array
 
 
-# protein_path for example: Area_1/11as_A/Protein
-def save_to_numpy_file(protein_path, point_cord_color_array):
-    out_file_name = BASE_DIR + str.split(protein_path, '/')[1] + '.numpy'  # protein name : 11as_A.numpy
-    np.save(out_file_name, point_cord_color_array)
-
-
 def create_cord_label_array(coordinates, labels):
     if len(coordinates) != len(labels):
         print("ERROR - different number of coordinates and colors")
@@ -196,20 +190,24 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
         print("NAME = ", pdb_name, "CHAIN = ", num_chain)
 
         ##Now creating the file
+        os.mkdir("./Proteins_Info/" + pdb_name + "_" + num_chain)
         protein_file_name = 'Area_1/' + pdb_name + '_' + num_chain + '/Protein'
         structure, chain_prot = download_and_parse_pdb(pdb_name, num_chain)
         list_of_residues, list_residue_coord = list_of_residue_coordinates_and_residue_seq(chain_prot)
         full = normalize_full_attributes(list_of_residues, list_residue_coord)
-        _, list_of_lables = list_of_residue_labels(pdb_name, structure, num_chain, chain_prot)
-        list_coord, list_lables = fill_arrays_to_num_points(full, list_of_lables)
+        _, list_of_labels = list_of_residue_labels(pdb_name, structure, num_chain, chain_prot)
+        list_coord, list_labels = fill_arrays_to_num_points(full, list_of_labels)
+        if (list_coord.shape[0] == 0 or list_labels.shape[0] == 0):
+          os.remove(pdb_name + ".pdb")
+          continue
         out_file_name = save_to_numpy_file(protein_file_name, list_coord, '_data') + '.npy'
         os.rename(out_file_name,
-                  "./Proteins_Info/"
+                  "./Proteins_Info/" + pdb_name + "_" + num_chain + "/"
                   + pdb_name + '_' + num_chain + '_data.npy')
-        out_file_name = save_to_numpy_file(protein_file_name, list_lables, '_lable') + '.npy'
+        out_file_name = save_to_numpy_file(protein_file_name, list_labels, '_label') + '.npy'
         os.rename(out_file_name,
-                  "./Proteins_Info/"
-                  + pdb_name + '_' + num_chain + '_lable.npy')
+                  "./Proteins_Info/" + pdb_name + "_" + num_chain + "/"
+                  + pdb_name + '_' + num_chain + '_label.npy')
 
         os.remove(pdb_name + ".pdb")
         number_of_structures += 1
@@ -218,25 +216,25 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
 # Gets list_coord(327X9) and list_labels(327) numpy.
 # Duplicates random indexes in the arrays correspondly.
 # If arrays' length is bigger than NUM_POINTS, we remove correspond values.
-def fill_arrays_to_num_points(list_coord, list_lables):
+def fill_arrays_to_num_points(list_coord, list_labels):
     length = list_coord.shape[0]
-    if (length != list_lables.shape[0]):
+    if (length != list_labels.shape[0]):
         print("ERROR: fill_arrays() with different lengths")
-        sys.exit()
+        return np.array([]), np.array([])
     # CASE1: fill in points
     if (length < NUM_POINTS):
         to_fill = NUM_POINTS - length
         for i in range(to_fill):
             index = random.randint(0, length - 1)
             list_coord = np.append(list_coord, [list_coord[index]], axis=0)
-            list_lables = np.append(list_lables, [list_lables[index]], axis=0)
+            list_labels = np.append(list_labels, [list_labels[index]], axis=0)
     # CASE2: remove somve points
     if (length > NUM_POINTS):
         list_coord = list_coord[0:NUM_POINTS]
-        list_lables = list_lables[0:NUM_POINTS]
+        list_labels = list_labels[0:NUM_POINTS]
 
-    return list_coord, list_lables
+    return list_coord, list_labels
 
 
 if __name__ == "__main__":
-    save_numpy_files_from_proteins("list_pdbs.txt", 30)
+    save_numpy_files_from_proteins("list_pdbs.txt", 500)
