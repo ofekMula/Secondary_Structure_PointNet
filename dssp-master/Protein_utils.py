@@ -172,7 +172,14 @@ def save_to_numpy_file(protein_path, array_to_save, string):
 
 # list of pdbs = "pdbs_list.txt"
 def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
-    os.mkdir("Proteins_Info")
+    proteins_in_Proteins_Info = set()
+    if os.path.isdir("Proteins_Info"):
+        for subdir, dirs, files in os.walk("Proteins_Info"):
+          for protein_dir in dirs:
+            proteins_in_Proteins_Info.add(protein_dir)
+    else:
+        os.mkdir("Proteins_Info")
+
     f_read = open(list_of_pdbs, "r")
     number_of_structures = 0
     for line in f_read:
@@ -191,7 +198,15 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
             else:
                 flag = 1
                 continue
-        print("NAME = ", pdb_name, "CHAIN = ", num_chain)
+        
+
+        #check if we already have this protein
+        folder_name = pdb_name + "_" + num_chain
+        if folder_name in proteins_in_Proteins_Info:
+          continue
+        else:
+          print("NAME = ", pdb_name, "CHAIN = ", num_chain)
+
 
         ##Now creating the file
         protein_file_name = 'Area_1/' + pdb_name + '_' + num_chain + '/Protein'
@@ -217,6 +232,7 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
                   + pdb_name + '_' + num_chain + '_label.npy')
 
         os.remove(pdb_name + ".pdb")
+        proteins_in_Proteins_Info.add(folder_name)
         number_of_structures += 1
         if (number_of_structures % 10 == 0):
           print("\t\t\tNUMBER OF STRUCTURES = ", number_of_structures)
