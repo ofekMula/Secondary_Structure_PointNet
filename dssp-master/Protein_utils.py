@@ -198,7 +198,7 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
           print("ERROR: pdb not found")
           continue
         list_of_residues, list_residue_coord = list_of_residue_coordinates_and_residue_seq(chain_prot)
-        full = normalize_full_attributes(list_of_residues, list_residue_coord)
+        full = normalize_coordinates(list_residue_coord)
         _, list_of_labels = list_of_residue_labels(pdb_name, structure, num_chain, chain_prot)
         list_coord, list_labels = fill_arrays_to_num_points(full, list_of_labels)
         if (list_coord.shape[0] == 0 or list_labels.shape[0] == 0):
@@ -217,7 +217,7 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
         os.remove(pdb_name + ".pdb")
         number_of_structures += 1
         if (number_of_structures % 10 == 0):
-          print("num structures:", number_of_structures)
+          print("\t\t\tNUMBER OF STRUCTURES = ", number_of_structures)
 
 
 # Gets list_coord(327X9) and list_labels(327) numpy.
@@ -244,5 +244,5 @@ def fill_arrays_to_num_points(list_coord, list_labels):
 
 
 if __name__ == "__main__":
-    save_numpy_files_from_proteins("list_pdbs.txt", 500)
+    save_numpy_files_from_proteins("list_pdbs.txt", 2000)
 
