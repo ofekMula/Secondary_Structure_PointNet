@@ -15,7 +15,7 @@ sys.path.append(ROOT_DIR)
 sys.path.append(os.path.join(ROOT_DIR, 'utils'))
 import provider
 import tf_util
-from model import *
+from pointnet_seg import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
@@ -185,8 +185,8 @@ def train():
 
             # why do we do convolution on empty tensor
             # Get model and loss
-            pred = get_model(pointclouds_pl, is_training_pl, bn_decay=bn_decay)  # model.py (hard coded)
-            loss = get_loss(pred, labels_pl)  # model.py (not hard coded :))
+            pred, end_points = get_model(pointclouds_pl, is_training_pl, bn_decay=bn_decay)  # model.py (hard coded)
+            loss = get_loss(pred, labels_pl, end_points)  # model.py (not hard coded :))
             tf.summary.scalar('loss', loss)
             print(pred.shape, loss.shape)
 
