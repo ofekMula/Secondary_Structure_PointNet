@@ -131,9 +131,11 @@ def create_cord_label_array(coordinates, labels):
 
 ## receives list_residues
 def normalize_coordinates(list_residues_coord):
-    xyz_max = np.amax(list_residues_coord, axis=0)[0:3]
-    list_residues_coord[:, 0:3] /= xyz_max
-    return list_residues_coord
+  #make every coordinate between -1 and 1
+  coord_abs = np.absolute(list_residues_coord)
+  xyz_max = np.amax(coord_abs, axis=0)[0:3]
+  list_residues_coord[:, 0:3] /= xyz_max
+  return list_residues_coord
 
 
 ## receives the residues sequence and noralizes
@@ -244,5 +246,5 @@ def fill_arrays_to_num_points(list_coord, list_labels):
 
 
 if __name__ == "__main__":
-    save_numpy_files_from_proteins("list_pdbs.txt", 2000)
+    save_numpy_files_from_proteins("list_pdbs.txt", 2500)
 
