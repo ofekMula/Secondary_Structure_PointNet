@@ -106,6 +106,15 @@ label_batches = np.array(label_batch_list)
 print(data_batches.shape)
 print(label_batches.shape)
 
+#print(data_batches[18])
+
+#Centerelizing each proteing to (0,0,0)
+for i in range(data_batches.shape[0]):
+  xyz_mean = np.mean(data_batches[i], axis=0)[0:3]
+  data_batches[i][:, 0:3] -= xyz_mean
+  #print("MEAN i = ", i, " is ", np.mean(data_batches[i], axis=0))
+
+
 # test_area = 'Area_'+str(FLAGS.test_area)
 # train_idxs = []
 # test_idxs = []
@@ -317,6 +326,9 @@ def eval_one_epoch(sess, ops, test_writer):
                 l = int(current_label[i, j])
                 total_seen_class[l] += 1
                 total_correct_class[l] += (pred_val[i - start_idx, j] == l)
+
+        if (batch_idx == num_batches-1):
+          print("predictions for first protein:\n", pred_val[0])
 
     log_string('eval mean loss: %f' % (loss_sum / float(total_seen / NUM_POINT)))
     log_string('eval accuracy: %f' % (total_correct / float(total_seen)))
