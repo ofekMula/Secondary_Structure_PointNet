@@ -81,7 +81,7 @@ def get_model(point_cloud, is_training, bn_decay=None):
                          bn=True, is_training=is_training,
                          scope='conv9', bn_decay=bn_decay)
 
-    net = tf_util.conv2d(net, 8, [1,1],
+    net = tf_util.conv2d(net, 3, [1,1],
                          padding='VALID', stride=[1,1], activation_fn=None,
                          scope='conv10')
                          #was hard-coded 50

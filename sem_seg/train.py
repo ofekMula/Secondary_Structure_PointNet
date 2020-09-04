@@ -50,7 +50,15 @@ LOG_FOUT = open(os.path.join(LOG_DIR, 'log_train.txt'), 'w')
 LOG_FOUT.write(str(FLAGS) + '\n')
 
 MAX_NUM_POINT = 512  ### do we need any adaptation for our structure of points in each protein?
-NUM_CLASSES = 8  ### need to fit for our caser
+NUM_CLASSES = 3  ### need to fit for our caser
+
+new_label_dictionary = {
+    0: 0, 1: 0, 2: 0,  # helix
+    3: 1, 4: 1,  # sheet
+    5: 2, 6: 2, 7: 2  # coil
+}
+
+
 
 BN_INIT_DECAY = 0.5
 BN_DECAY_DECAY_RATE = 0.5
@@ -93,11 +101,16 @@ for subdir_info, dirs_info, files_info in os.walk(protein_info_dir):
                     data_batch = np.load(protein_name_npy)
                 elif ("label" in protein_name_npy):
                     label_batch = np.load(protein_name_npy)
+                    for i, label in enumerate(label_batch):
+                        label_batch[i] = new_label_dictionary[label]
                 else:
                     print("ERROR: unknown file: " + protein_name_npy)
             if (data_batch.shape[0] > 0 and label_batch.shape[0] > 0):
                 data_batch_list.append(data_batch)
                 label_batch_list.append(label_batch)
+
+
+
 
 data_batches = np.array(data_batch_list)
 label_batches = np.array(label_batch_list)
