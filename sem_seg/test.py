@@ -68,7 +68,6 @@ def evaluate():
     # Restore variables from disk.
     saver.restore(sess, MODEL_PATH)
     print("Model restored.")
-    sys.exit()
 
     ops = {'pointclouds_pl': pointclouds_pl,
            'labels_pl': labels_pl,
@@ -81,7 +80,7 @@ def evaluate():
 
     out_data_label_filename = INPUT + '_output_pred.txt'
     out_data_label_filename = os.path.join(DUMP_DIR, out_data_label_filename)
-    print("dest: ", PDB_NAME, out_data_label_filename)
+    print("dest: ", out_data_label_filename)
 
     fout_data_label = open(out_data_label_filename, 'w')
 
@@ -100,19 +99,25 @@ def evaluate():
             flag = 1
             continue
 
-    structure, chain_prot = Protein_Utils.download_and_parse_pdb(pdb_name, num_chain)
+    structure, chain_prot = Protein_utils.download_and_parse_pdb(pdb_name, num_chain)
     if isinstance(structure, int):
         print("ERROR: pdb not found")
         sys.exit()
-    list_of_residues, list_residue_coord = Protein_Utils.list_of_residue_coordinates_and_residue_seq(chain_prot)
-    full = Protein_Utils.normalize_coordinates(list_residue_coord)
+    print(pdb_name)
+    list_of_residues, list_residue_coord = Protein_utils.list_of_residue_coordinates_and_residue_seq(chain_prot)
+    full = Protein_utils.normalize_coordinates(list_residue_coord)
     ##We try (-1, -1, ..., -1) lables (garbage)
-    list_of_labels = np.array([-1 for i in full])
-    list_coord, list_labels = Protein_Utils.fill_arrays_to_num_points(full, list_of_labels)
+    list_of_labels = np.array([1 for i in full])
+    list_coord, list_labels = Protein_utils.fill_arrays_to_num_points(full, list_of_labels)
+    print(list_coord.shape, list_labels.shape)
+
+    new_diminsional_coord_list = np.array([list_coord])
+    new_diminsional_label_list = np.array([list_labels])
+    print(new_diminsional_coord_list.shape, new_diminsional_label_list.shape)
     os.remove(pdb_name + ".pdb")
 
-    feed_dict = {ops['pointclouds_pl']: list_coord,
-                 ops['labels_pl']: list_labels,
+    feed_dict = {ops['pointclouds_pl']: new_diminsional_coord_list,
+                 ops['labels_pl']: new_diminsional_label_list,
                  ops['is_training_pl']: is_training}
     loss_val, pred_val = sess.run([ops['loss'], ops['pred_softmax']],
                                   feed_dict=feed_dict)
