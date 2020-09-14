@@ -12,7 +12,6 @@ ROOT_DIR = os.path.dirname(BASE_DIR)
 sys.path.append(BASE_DIR)
 sys.path.append(ROOT_DIR)
 sys.path.append(os.path.join(ROOT_DIR, 'utils'))
-import provider
 from LocalPointNet3.pointnet_cls import *
 
 parser = argparse.ArgumentParser()
@@ -154,7 +153,19 @@ def log_string(out_str):
     LOG_FOUT.flush()
     print(out_str)
 
-
+def shuffle_data(data, labels):
+    """ Shuffle data and labels.
+        Input:
+          data: B,N,... numpy array
+          label: B,... numpy array
+        Return:
+          shuffled data, label and shuffle indices
+    """
+    idx = np.arange(len(labels))
+    np.random.shuffle(idx)
+    return data[idx, ...], labels[idx], idx
+    
+    
 ### after the adaptations , in this stage i don't think we need to change something here.
 def get_learning_rate(batch):
     learning_rate = tf.train.exponential_decay(
@@ -260,7 +271,7 @@ def train_one_epoch(sess, ops, train_writer):
     is_training = True
 
     log_string('----')
-    current_data, current_label, _ = provider.shuffle_data(train_data[:, 0:NUM_POINT, :], train_label)
+    current_data, current_label, _ = shuffle_data(train_data[:, 0:NUM_POINT, :], train_label)
     file_size = current_data.shape[0]
     num_batches = file_size // BATCH_SIZE
     #num_batches = 10 ###added only for slicing training time. will be deleted later
