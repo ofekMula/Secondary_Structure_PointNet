@@ -11,7 +11,6 @@ ROOT_DIR = os.path.dirname(BASE_DIR)
 sys.path.append(BASE_DIR)
 sys.path.append(ROOT_DIR)
 sys.path.append(os.path.join(ROOT_DIR, 'utils'))
-import provider
 from PointNet8.pointnet_seg import *
 
 parser = argparse.ArgumentParser()
@@ -61,20 +60,6 @@ HOSTNAME = socket.gethostname()
 we can divide the db for Areas, and each area will containe Proteins(=rooms) ,
 each protein contains amino acid ( = object in a room),each object is a set of atoms(=point clouds)
 '''
-# ALL_FILES = provider.getDataFiles('indoor3d_sem_seg_hdf5_data/all_files.txt') ###need to change getDataFiles method
-# room_filelist = [line.rstrip() for line in open('indoor3d_sem_seg_hdf5_data/room_filelist.txt')]
-
-# # Load ALL data
-# data_batch_list = []
-# label_batch_list = []
-# for h5_filename in ALL_FILES:
-#     data_batch, label_batch = provider.loadDataFile(h5_filename)### instead of h5 file, we will use protein.npy file
-#     data_batch_list.append(data_batch)
-#     label_batch_list.append(label_batch)
-# data_batches = np.concatenate(data_batch_list, 0)
-# label_batches = np.concatenate(label_batch_list, 0)
-# print(data_batches.shape)
-# print(label_batches.shape)
 
 # Load protein data
 data_batch_list = []
@@ -112,23 +97,6 @@ for i in range(data_batches.shape[0]):
   #print("MEAN i = ", i, " is ", np.mean(data_batches[i], axis=0))
 
 
-# test_area = 'Area_'+str(FLAGS.test_area)
-# train_idxs = []
-# test_idxs = []
-# for i,room_name in enumerate(room_filelist):
-#     if test_area in room_name:
-#         test_idxs.append(i)
-#     else:
-#         train_idxs.append(i)
-# train_idxs = train_idxs[0:1000]
-# test_idxs = test_idxs[0:1000]
-# train_data = data_batches[train_idxs,...]
-# train_label = label_batches[train_idxs]
-# test_data = data_batches[test_idxs,...]
-# test_label = label_batches[test_idxs]
-# print(train_data.shape, train_label.shape)
-# print(test_data.shape, test_label.shape)
-
 
 # division of proteins to test and train indexs
 train_idxs = []
@@ -150,6 +118,17 @@ def log_string(out_str):
     LOG_FOUT.flush()
     print(out_str)
 
+def shuffle_data(data, labels):
+    """ Shuffle data and labels.
+        Input:
+          data: B,N,... numpy array
+          label: B,... numpy array
+        Return:
+          shuffled data, label and shuffle indices
+    """
+    idx = np.arange(len(labels))
+    np.random.shuffle(idx)
+    return data[idx, ...], labels[idx], idx
 
 ### after the adaptations , in this stage i don't think we need to change something here.
 def get_learning_rate(batch):
@@ -256,7 +235,7 @@ def train_one_epoch(sess, ops, train_writer):
     is_training = True
 
     log_string('----')
-    current_data, current_label, _ = provider.shuffle_data(train_data[:, 0:NUM_POINT, :], train_label)
+    current_data, current_label, _ = shuffle_data(train_data[:, 0:NUM_POINT, :], train_label)
     file_size = current_data.shape[0]
     num_batches = file_size // BATCH_SIZE
     # num_batches = 2 ###added only for slicing training time. will be deleted later
