@@ -1,6 +1,4 @@
 import argparse
-import math
-import h5py
 import numpy as np
 import tensorflow as tf
 import socket
@@ -14,8 +12,7 @@ sys.path.append(BASE_DIR)
 sys.path.append(ROOT_DIR)
 sys.path.append(os.path.join(ROOT_DIR, 'utils'))
 import provider
-import tf_util
-from pointnet_seg import *
+from PointNet8.pointnet_seg import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')

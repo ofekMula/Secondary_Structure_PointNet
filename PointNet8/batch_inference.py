@@ -4,8 +4,8 @@ import sys
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 sys.path.append(BASE_DIR)
-from model import *
-import indoor3d_util
+from PointNet8.model import *
+from PointNet8 import indoor3d_util
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
@@ -140,7 +140,7 @@ def eval_one_epoch(sess, ops, room_path, out_data_label_filename, out_gt_label_f
             pred = pred_label[b, :]
             for i in range(NUM_POINT):
                 color = indoor3d_util.g_label2color[pred[i]]
-                color_gt = indoor3d_util.g_label2color[current_label[start_idx+b, i]]
+                color_gt = indoor3d_util.g_label2color[current_label[start_idx + b, i]]
                 if FLAGS.visu:
                     fout.write('v %f %f %f %d %d %d\n' % (pts[i,6], pts[i,7], pts[i,8], color[0], color[1], color[2]))
                     fout_gt.write('v %f %f %f %d %d %d\n' % (pts[i,6], pts[i,7], pts[i,8], color_gt[0], color_gt[1], color_gt[2]))

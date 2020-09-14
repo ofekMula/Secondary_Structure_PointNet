@@ -3,7 +3,7 @@ import sys
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 sys.path.append(BASE_DIR)
-import indoor3d_util
+from PointNet8 import indoor3d_util
 
 anno_paths = [line.rstrip() for line in open(os.path.join(BASE_DIR, 'meta/anno_paths.txt'))]
 anno_paths = [os.path.join(indoor3d_util.DATA_PATH, p) for p in anno_paths]

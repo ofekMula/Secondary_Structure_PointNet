@@ -1,12 +1,8 @@
-import numpy as np
-import glob
-import os
 import sys
-import sample_code
+from PointNet8 import sample_code
 import os
 import random
 # from Bio.PDB.DSSP import DSSP
-import Bio.PDB
 import numpy as np
 from Bio.PDB import *
 
