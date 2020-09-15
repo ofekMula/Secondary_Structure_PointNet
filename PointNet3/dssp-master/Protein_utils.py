@@ -1,5 +1,5 @@
 import sys
-from PointNet8 import sample_code
+import sample_code
 import os
 import random
 # from Bio.PDB.DSSP import DSSP
