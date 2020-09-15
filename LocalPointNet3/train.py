@@ -2,7 +2,7 @@ import argparse
 import numpy as np
 import tensorflow as tf
 import socket
-from LocalPointNet3 import local_point_clouds
+import local_point_clouds
 
 import os
 import sys
