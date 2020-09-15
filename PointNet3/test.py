@@ -1,7 +1,7 @@
 import argparse
-from PointNet8 import Protein_utils
+import Protein_utils
 import tensorflow as tf
-from PointNet8.pointnet_seg import *
+from pointnet_seg import *
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
