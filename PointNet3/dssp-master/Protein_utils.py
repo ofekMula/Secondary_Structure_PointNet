@@ -2,6 +2,7 @@ import sys
 import sample_code
 import os
 import random
+import argparse
 # from Bio.PDB.DSSP import DSSP
 import numpy as np
 from Bio.PDB import *
