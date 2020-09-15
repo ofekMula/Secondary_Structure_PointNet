@@ -14,6 +14,12 @@ sys.path.append(BASE_DIR)
 # CONSTANTS
 # -----------------------------------------------------------------------------
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--num_proteins', type=int, default=1000, help='Database size [default:1000]')
+FLAGS = parser.parse_args()
+NUM_PROTEINS = FLAGS.num_proteins
+
+
 NUM_POINTS = 512
 
 label_dict = {'H': 0,
@@ -258,5 +264,5 @@ def fill_arrays_to_num_points(list_coord, list_labels):
 
 
 if __name__ == "__main__":
-    save_numpy_files_from_proteins("list_pdbs.txt", 2500)
+    save_numpy_files_from_proteins("list_pdbs.txt", NUM_PROTEINS)
 
