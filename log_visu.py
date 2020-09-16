@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 
 ##############CONSTANTS#########
-
 LOG_FILE_PATH="./log_train.txt"
 LOG_FILE_PATH2="./log6/log_train.txt"
 EPOCH_PREFIX_STR= "****"
@@ -17,8 +15,6 @@ MEAN_LOSS_PLOT_NAME="mean loss vs epoch number.png"
 AVG_CLASS_ACCURACY_PLOT_NAME="avg class acc vs epoch number.png"
 IN_EPOCH = False
 
-
-#######helper functions##########
 def visualize_training_log(train_results):
     #print(train_results)
     epoches_indexes=[i for i in range(0,len(train_results))]
