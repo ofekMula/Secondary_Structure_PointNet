@@ -114,6 +114,10 @@ def evaluate():
     list_of_labels = np.array([1 for i in full])
     list_coord, list_labels = Protein_utils.fill_arrays_to_num_points(full, list_of_labels)
     print(list_coord.shape, list_labels.shape)
+    
+    #Centerelizing the proteing to (0,0,0)
+     xyz_mean = np.mean(list_coord, axis=0)[0:3]
+     list_coord[:, 0:3] -= xyz_mean
 
     #Instead of 512 X 3, we want to have 512*32*3
     local_data = []
