@@ -2,7 +2,6 @@ import sys
 import sample_code
 import os
 import random
-import argparse
 # from Bio.PDB.DSSP import DSSP
 import numpy as np
 from Bio.PDB import *
@@ -15,10 +14,7 @@ sys.path.append(BASE_DIR)
 # CONSTANTS
 # -----------------------------------------------------------------------------
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--num_proteins', type=int, default=1000, help='Database size [default:1000]')
-FLAGS = parser.parse_args()
-NUM_PROTEINS = FLAGS.num_proteins
+NUM_PROTEINS = 2500
 
 
 NUM_POINTS = 512
