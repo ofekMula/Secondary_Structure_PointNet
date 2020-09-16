@@ -16,7 +16,7 @@ AVG_CLASS_ACCURACY_PLOT_NAME="avg class acc vs epoch number.png"
 IN_EPOCH = False
 
 def visualize_training_log(train_results):
-    #print(train_results)
+   
     epoches_indexes=[i for i in range(0,len(train_results))]
     eval_accuracy_per_ecpoch=[train_results[i][1] for i in range(0,len(train_results))]
     eval_loss_per_ecpoch=[train_results[i][0] for i in range(0,len(train_results))]
@@ -67,7 +67,6 @@ def process_epoch_log(log_file,line):
     else :
         return (-1,-1,-1)
 
-###########main########
 if __name__ == "__main__":
     epoch_counter=0
     log_file=open(LOG_FILE_PATH)
