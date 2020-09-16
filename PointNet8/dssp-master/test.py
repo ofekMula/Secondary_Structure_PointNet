@@ -108,6 +108,12 @@ def evaluate():
     list_coord, list_labels = fill_arrays_to_num_points(full, list_of_labels)
     print(list_coord.shape, list_labels.shape)
 
+    
+    #Centerelizing the proteing to (0,0,0)
+     xyz_mean = np.mean(list_coord, axis=0)[0:3]
+     list_coord[:, 0:3] -= xyz_mean
+   
+    
     new_diminsional_coord_list = np.array([list_coord])
     new_diminsional_label_list = np.array([list_labels])
     print(new_diminsional_coord_list.shape, new_diminsional_label_list.shape)
