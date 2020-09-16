@@ -1,10 +1,16 @@
 import argparse
-from Protein_utils import *
+import Protein_utils
 import tensorflow as tf
+
 
 import sys
 sys.path.append('../')
-from pointnet_seg import *
+from pointnet_cls import *
+import local_point_clouds
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(BASE_DIR)
+sys.path.append(BASE_DIR)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
@@ -30,7 +36,8 @@ LOG_FOUT = open(os.path.join(DUMP_DIR, 'log_evaluate.txt'), 'w')
 LOG_FOUT.write(str(FLAGS) + '\n')
 
 NUM_CLASSES = 3
-
+CLOUD_SIZE=32
+NUM_POINTS = 512
 
 def log_string(out_str):
     LOG_FOUT.write(out_str + '\n')
@@ -42,7 +49,7 @@ def evaluate():
     is_training = False
 
     with tf.device('/gpu:' + str(GPU_INDEX)):
-        pointclouds_pl, labels_pl = placeholder_inputs(BATCH_SIZE, NUM_POINT)
+        pointclouds_pl, labels_pl = placeholder_inputs(NUM_POINTS, CLOUD_SIZE)
         is_training_pl = tf.placeholder(tf.bool, shape=())
         print(pointclouds_pl.shape, labels_pl.shape)
 
@@ -96,29 +103,47 @@ def evaluate():
             flag = 1
             continue
 
-    structure, chain_prot = download_and_parse_pdb(pdb_name, num_chain)
+    structure, chain_prot = Protein_utils.download_and_parse_pdb(pdb_name, num_chain)
     if isinstance(structure, int):
         print("ERROR: pdb not found")
         sys.exit()
     print(pdb_name)
-    list_of_residues, list_residue_coord = list_of_residue_coordinates_and_residue_seq(chain_prot)
-    full = normalize_coordinates(list_residue_coord)
+    list_of_residues, list_residue_coord = Protein_utils.list_of_residue_coordinates_and_residue_seq(chain_prot)
+    full = Protein_utils.normalize_coordinates(list_residue_coord)
     ##We try (-1, -1, ..., -1) lables (garbage)
     list_of_labels = np.array([1 for i in full])
-    list_coord, list_labels = fill_arrays_to_num_points(full, list_of_labels)
+    list_coord, list_labels = Protein_utils.fill_arrays_to_num_points(full, list_of_labels)
     print(list_coord.shape, list_labels.shape)
 
-    new_diminsional_coord_list = np.array([list_coord])
-    new_diminsional_label_list = np.array([list_labels])
-    print(new_diminsional_coord_list.shape, new_diminsional_label_list.shape)
+    #Instead of 512 X 3, we want to have 512*32*3
+    local_data = []
+    local_label = []
+    _, neighbors = local_point_clouds.build_local_point_cloud(list_coord, CLOUD_SIZE)
+    #neigbors is of shape 512 X 32.
+    for j in range(NUM_POINTS):
+        local_cloud = []
+        for w in neighbors[j]:
+            local_cloud.append(list_coord[w])
+        local_data.append(local_cloud)
+        local_label.append(list_labels[j])
+    local_data = np.array(local_data)
+    local_label = np.array(local_label)
+    print(local_data.shape)
+    print(local_label.shape)
+
+    #new_diminsional_coord_list = np.array([list_coord])
+    #new_diminsional_label_list = np.array([list_labels])
+    #print(new_diminsional_coord_list.shape, new_diminsional_label_list.shape)
+    
+    
     os.remove(pdb_name + ".pdb")
 
-    feed_dict = {ops['pointclouds_pl']: new_diminsional_coord_list,
-                 ops['labels_pl']: new_diminsional_label_list,
+    feed_dict = {ops['pointclouds_pl']: local_data,
+                 ops['labels_pl']: local_label,
                  ops['is_training_pl']: is_training}
     loss_val, pred_val = sess.run([ops['loss'], ops['pred_softmax']],
                                   feed_dict=feed_dict)
-    pred_label = np.argmax(pred_val, 2)  # BxN
+    pred_label = np.argmax(pred_val, 1)  # BxN
     print("PRED_LABEL:\n ", pred_label)
 
     fout_out.write(out_data_label_filename + '\n')
