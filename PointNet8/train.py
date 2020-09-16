@@ -63,7 +63,7 @@ each protein contains amino acid ( = object in a room),each object is a set of a
 # Load protein data
 data_batch_list = []
 label_batch_list = []
-protein_info_dir = "../dssp-master/Proteins_Info"
+protein_info_dir = "./dssp-master/Proteins_Info"
 for subdir_info, dirs_info, files_info in os.walk(protein_info_dir):
     for protein_dir in dirs_info:
         dir_name = os.path.join(subdir_info, protein_dir)
