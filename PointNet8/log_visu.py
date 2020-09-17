@@ -9,6 +9,9 @@ EVAL_AVG_CLASS_ACC="eval avg class acc"
 EPOCH_VAL_DELIMETER= ": "
 EPOCH_NUMBER_LABEL="Epoch number"
 EPOCH_ACCURACY_LABEL="accuracy"
+EPOCH_AVG_CLASS_ACC_LABEL = "avg class acc"
+EPOCH_MEAN_LOSS_LABEL = "mean loss"
+
 AVG_ACCURACY_PLOT_NAME="acc vs epoch number.png"
 MEAN_LOSS_PLOT_NAME="mean loss vs epoch number.png"
 AVG_CLASS_ACCURACY_PLOT_NAME="avg class acc vs epoch number.png"
@@ -30,11 +33,11 @@ def visualize_training_log(train_results):
     ax1.plot(epoches_indexes, eval_accuracy_per_ecpoch)
     
     ax2.set_xlabel(EPOCH_NUMBER_LABEL)
-    ax2.set_ylabel(EPOCH_ACCURACY_LABEL)
+    ax2.set_ylabel(EPOCH_MEAN_LOSS_LABEL)
     ax2.plot(epoches_indexes, eval_loss_per_ecpoch)
     
     ax3.set_xlabel(EPOCH_NUMBER_LABEL)
-    ax3.set_ylabel(EPOCH_ACCURACY_LABEL)
+    ax3.set_ylabel(EPOCH_AVG_CLASS_ACC_LABEL)
     ax3.plot(epoches_indexes, eval_avg_class_accuracy_per_ecpoch)
     fig1.savefig(AVG_ACCURACY_PLOT_NAME)  
     fig2.savefig(MEAN_LOSS_PLOT_NAME)  
