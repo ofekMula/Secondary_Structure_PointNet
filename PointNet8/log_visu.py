@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-LOG_FILE_PATH=".log/log_train.txt"
+LOG_FILE_PATH="./log/log_train.txt"
 LOG_FILE_PATH2="./log6/log_train.txt"
 EPOCH_PREFIX_STR= "****"
 EVAL_MEAN_LOSS="eval mean loss"
