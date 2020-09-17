@@ -110,8 +110,8 @@ def evaluate():
 
     
     #Centerelizing the proteing to (0,0,0)
-     xyz_mean = np.mean(list_coord, axis=0)[0:3]
-     list_coord[:, 0:3] -= xyz_mean
+    xyz_mean = np.mean(list_coord, axis=0)[0:3]
+    list_coord[:, 0:3] -= xyz_mean
    
     
     new_diminsional_coord_list = np.array([list_coord])
