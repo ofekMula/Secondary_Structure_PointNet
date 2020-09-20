@@ -46,7 +46,7 @@ LOG_FOUT = open(os.path.join(LOG_DIR, 'log_train.txt'), 'w')
 LOG_FOUT.write(str(FLAGS) + '\n')
 
 MAX_NUM_POINT = 512  ### do we need any adaptation for our structure of points in each protein?
-CLOUD_SIZE = 32
+CLOUD_SIZE = 8
 NUM_CLASSES = 3  ### need to fit for our caser
 
 new_label_dictionary = {
@@ -92,20 +92,25 @@ for subdir_info, dirs_info, files_info in os.walk(protein_info_dir):
                 data_batch_list.append(data_batch)
                 label_batch_list.append(label_batch)
 
-
-
+#for i in range(len(data_batch_list)):
+#  print(data_batch_list[i].shape, label_batch_list[i].shape)
 
 data_batches = np.array(data_batch_list)
 label_batches = np.array(label_batch_list)
 
-#JUST FOR CHECK  - DELETE THE FOLLOING 2 lines
-data_batches = data_batches[0:5000]
-label_batches = label_batches[0:5000]
+#print(data_batches[1].shape)
 
-print(data_batches.shape) #NUM_PROTEINS X NUM_POINT X 3
-print(label_batches.shape) #NUM_PROTEINS X NUM_POINS
+
+#JUST FOR CHECK  - DELETE THE FOLLOING 2 lines
+#data_batches = data_batches[0:5000]
+#label_batches = label_batches[0:5000]
+
+#print(data_batches.shape) #NUM_PROTEINS X num_point_in_protein X 3
+#print(label_batches.shape) #NUM_PROTEINS X num_point_in_protein
 assert (data_batches.shape[0] == label_batches.shape[0])
 NUM_PROTEINS = data_batches.shape[0]
+
+print(NUM_PROTEINS)
 
 
 #Centerelizing each proteing to (0,0,0)
@@ -122,11 +127,13 @@ local_data = []
 local_label = []
 for i in range(NUM_PROTEINS):
     _, neighbors = local_point_clouds.build_local_point_cloud(data_batches[i], CLOUD_SIZE)
+    num_points_in_protein = data_batches[i].shape[0]
     #neigbors is of shape 512 X 32.
-    for j in range(MAX_NUM_POINT):
+    for j in range(num_points_in_protein):
         local_cloud = []
         for w in neighbors[j]:
             local_cloud.append(data_batches[i][w])
+        #sys.exit()
         local_data.append(local_cloud)
         local_label.append(label_batches[i][j])
 local_data = np.array(local_data)
@@ -134,12 +141,15 @@ local_label = np.array(local_label)
 print(local_data.shape)
 print(local_label.shape)
 
+assert(local_data.shape[0] == local_label.shape[0])
+total_number_of_points = local_data.shape[0]
+
 # division of proteins to test and train indexs
 train_idxs = []
 test_idxs = []
-threshold_idx = (NUM_PROTEINS * MAX_NUM_POINT * 5) // 6  # we take the 5/6 of the total number of proteins, and the rest to test
+threshold_idx = (total_number_of_points * 5) // 6  # we take the 5/6 of the total number of proteins, and the rest to test
 train_idxs = range(threshold_idx)
-test_idxs = range(threshold_idx, NUM_PROTEINS * MAX_NUM_POINT)
+test_idxs = range(threshold_idx, total_number_of_points)
 train_data = local_data[train_idxs, ...]
 train_label = local_label[train_idxs]
 test_data = local_data[test_idxs, ...]
