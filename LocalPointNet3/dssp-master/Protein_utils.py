@@ -218,6 +218,7 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
         _, list_of_labels = list_of_residue_labels(pdb_name, structure, num_chain, chain_prot)
         if(full.shape[0] != list_of_labels.shape[0]):
           print("different lengths!")
+          os.remove(pdb_name + ".pdb")
           continue
         #list_coord, list_labels = fill_arrays_to_num_points(full, list_of_labels)
         #if (list_coord.shape[0] == 0 or list_labels.shape[0] == 0):
