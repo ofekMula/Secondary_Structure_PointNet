@@ -112,19 +112,20 @@ def evaluate():
     full = Protein_utils.normalize_coordinates(list_residue_coord)
     ##We try (-1, -1, ..., -1) lables (garbage)
     list_of_labels = np.array([1 for i in full])
-    list_coord, list_labels = Protein_utils.fill_arrays_to_num_points(full, list_of_labels)
+    #list_coord, list_labels = Protein_utils.fill_arrays_to_num_points(full, list_of_labels)
+    list_coord, list_labels = full, list_of_labels
     print(list_coord.shape, list_labels.shape)
     
     #Centerelizing the proteing to (0,0,0)
     xyz_mean = np.mean(list_coord, axis=0)[0:3]
     list_coord[:, 0:3] -= xyz_mean
 
-    #Instead of 512 X 3, we want to have 512*32*3
+    #Instead of n X 3, we want to have n*32*3
     local_data = []
     local_label = []
     _, neighbors = local_point_clouds.build_local_point_cloud(list_coord, CLOUD_SIZE)
-    #neigbors is of shape 512 X 32.
-    for j in range(NUM_POINTS):
+    #neigbors is of shape num_of_points X 32.
+    for j in range(full.shape[0]):
         local_cloud = []
         for w in neighbors[j]:
             local_cloud.append(list_coord[w])
