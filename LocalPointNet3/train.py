@@ -55,8 +55,6 @@ new_label_dictionary = {
     5: 2, 6: 2, 7: 2  # coil
 }
 
-
-
 BN_INIT_DECAY = 0.5
 BN_DECAY_DECAY_RATE = 0.5
 # BN_DECAY_DECAY_STEP = float(DECAY_STEP * 2)
@@ -92,33 +90,31 @@ for subdir_info, dirs_info, files_info in os.walk(protein_info_dir):
                 data_batch_list.append(data_batch)
                 label_batch_list.append(label_batch)
 
-#for i in range(len(data_batch_list)):
+# for i in range(len(data_batch_list)):
 #  print(data_batch_list[i].shape, label_batch_list[i].shape)
 
 data_batches = np.array(data_batch_list)
 label_batches = np.array(label_batch_list)
 
-#print(data_batches[1].shape)
+# print(data_batches[1].shape)
 
 
-#JUST FOR CHECK  - DELETE THE FOLLOING 2 lines
-#data_batches = data_batches[0:5000]
-#label_batches = label_batches[0:5000]
+# JUST FOR CHECK  - DELETE THE FOLLOING 2 lines
+data_batches = data_batches[0:1000]
+label_batches = label_batches[0:1000]
 
-#print(data_batches.shape) #NUM_PROTEINS X num_point_in_protein X 3
-#print(label_batches.shape) #NUM_PROTEINS X num_point_in_protein
+# print(data_batches.shape) #NUM_PROTEINS X num_point_in_protein X 3
+# print(label_batches.shape) #NUM_PROTEINS X num_point_in_protein
 assert (data_batches.shape[0] == label_batches.shape[0])
 NUM_PROTEINS = data_batches.shape[0]
 
 print(NUM_PROTEINS)
 
-
-#Centerelizing each proteing to (0,0,0)
+# Centerelizing each proteing to (0,0,0)
 for i in range(NUM_PROTEINS):
-  xyz_mean = np.mean(data_batches[i], axis=0)[0:3]
-  data_batches[i][:, 0:3] -= xyz_mean
-  #print("MEAN i = ", i, " is ", np.mean(data_batches[i], axis=0))
-
+    xyz_mean = np.mean(data_batches[i], axis=0)[0:3]
+    data_batches[i][:, 0:3] -= xyz_mean
+    # print("MEAN i = ", i, " is ", np.mean(data_batches[i], axis=0))
 
 # In the local model, we create a point-cloud of size 32 around each residue.
 # That means that if we had:        N protines X 512 points X 3 coordinates,
@@ -126,28 +122,26 @@ for i in range(NUM_PROTEINS):
 local_data = []
 local_label = []
 for i in range(NUM_PROTEINS):
-    _, neighbors = local_point_clouds.build_local_point_cloud(data_batches[i], CLOUD_SIZE)
+    local_cloud, _ = local_point_clouds.build_local_point_cloud(data_batches[i], CLOUD_SIZE)
     num_points_in_protein = data_batches[i].shape[0]
-    #neigbors is of shape 512 X 32.
+    # neigbors is of shape 512 X 32.
     for j in range(num_points_in_protein):
-        local_cloud = []
-        for w in neighbors[j]:
-            local_cloud.append(data_batches[i][w])
-        #sys.exit()
-        local_data.append(local_cloud)
+        local_data.append(local_cloud[j])
         local_label.append(label_batches[i][j])
+
 local_data = np.array(local_data)
 local_label = np.array(local_label)
 print(local_data.shape)
 print(local_label.shape)
 
-assert(local_data.shape[0] == local_label.shape[0])
+assert (local_data.shape[0] == local_label.shape[0])
 total_number_of_points = local_data.shape[0]
 
 # division of proteins to test and train indexs
 train_idxs = []
 test_idxs = []
-threshold_idx = (total_number_of_points * 5) // 6  # we take the 5/6 of the total number of proteins, and the rest to test
+threshold_idx = (
+                            total_number_of_points * 5) // 6  # we take the 5/6 of the total number of proteins, and the rest to test
 train_idxs = range(threshold_idx)
 test_idxs = range(threshold_idx, total_number_of_points)
 train_data = local_data[train_idxs, ...]
@@ -162,6 +156,7 @@ def log_string(out_str):
     LOG_FOUT.flush()
     print(out_str)
 
+
 def shuffle_data(data, labels):
     """ Shuffle data and labels.
         Input:
@@ -173,8 +168,8 @@ def shuffle_data(data, labels):
     idx = np.arange(len(labels))
     np.random.shuffle(idx)
     return data[idx, ...], labels[idx], idx
-    
-    
+
+
 ### after the adaptations , in this stage i don't think we need to change something here.
 def get_learning_rate(batch):
     learning_rate = tf.train.exponential_decay(
@@ -283,14 +278,14 @@ def train_one_epoch(sess, ops, train_writer):
     current_data, current_label, _ = shuffle_data(train_data[:, 0:NUM_POINT, :], train_label)
     file_size = current_data.shape[0]
     num_batches = file_size // BATCH_SIZE
-    #num_batches = 10 ###added only for slicing training time. will be deleted later
+    # num_batches = 10 ###added only for slicing training time. will be deleted later
     total_correct = 0
     total_seen = 0
     loss_sum = 0
 
     for batch_idx in range(num_batches):
-        if(batch_idx % 500 == 0):
-          print('Current batch/total batch num: %d/%d' % (batch_idx, num_batches))
+        if (batch_idx % 500 == 0):
+            print('Current batch/total batch num: %d/%d' % (batch_idx, num_batches))
         start_idx = batch_idx * BATCH_SIZE
         end_idx = (batch_idx + 1) * BATCH_SIZE
 
@@ -302,13 +297,13 @@ def train_one_epoch(sess, ops, train_writer):
             feed_dict=feed_dict)
         train_writer.add_summary(summary, step)
         pred_val = np.argmax(pred_val, 1)  # how to
-        #print("PREDINCTIONS:", pred_val.shape)
-        #print(pred_val)
+        # print("PREDINCTIONS:", pred_val.shape)
+        # print(pred_val)
 
-       # print("CURRENT_LABEL:\n", current_label[start_idx:end_idx])
+        # print("CURRENT_LABEL:\n", current_label[start_idx:end_idx])
 
         correct = np.sum(pred_val == current_label[start_idx:end_idx])
-        #print("CORRECT = ", correct)
+        # print("CORRECT = ", correct)
         total_correct += correct
         total_seen += (BATCH_SIZE)
         loss_sum += loss_val
@@ -332,10 +327,10 @@ def eval_one_epoch(sess, ops, test_writer):
 
     file_size = current_data.shape[0]
     num_batches = file_size // BATCH_SIZE
-    #num_batches = 10 ###added only for slicing training time. will be deleted later
+    # num_batches = 10 ###added only for slicing training time. will be deleted later
     for batch_idx in range(num_batches):
-        if(batch_idx % 500 == 0):
-          print('Current batch/total batch num: %d/%d' % (batch_idx, num_batches))
+        if (batch_idx % 500 == 0):
+            print('Current batch/total batch num: %d/%d' % (batch_idx, num_batches))
         start_idx = batch_idx * BATCH_SIZE
         end_idx = (batch_idx + 1) * BATCH_SIZE
 
@@ -351,12 +346,12 @@ def eval_one_epoch(sess, ops, test_writer):
         total_seen += (BATCH_SIZE)
         loss_sum += (loss_val * BATCH_SIZE)
         for i in range(start_idx, end_idx):
-          l = int(current_label[i])
-          total_seen_class[l]+=1
-          total_correct_class[l] += (pred_val[i-start_idx]== l)
+            l = int(current_label[i])
+            total_seen_class[l] += 1
+            total_correct_class[l] += (pred_val[i - start_idx] == l)
 
-        if (batch_idx == num_batches-1):
-          print("predictions for 100 points:\n", pred_val)
+        if (batch_idx == num_batches - 1):
+            print("predictions for 100 points:\n", pred_val)
 
     log_string('eval mean loss: %f' % (loss_sum / float(total_seen)))
     log_string('eval accuracy: %f' % (total_correct / float(total_seen)))
