@@ -123,13 +123,11 @@ def evaluate():
     #Instead of n X 3, we want to have n*32*3
     local_data = []
     local_label = []
-    _, neighbors = local_point_clouds.build_local_point_cloud(list_coord, CLOUD_SIZE)
+    local_cloud, _ = local_point_clouds.build_local_point_cloud(list_coord, CLOUD_SIZE)
+    num_points_in_protein = list_coord.shape[0]
     #neigbors is of shape num_of_points X 32.
-    for j in range(full.shape[0]):
-        local_cloud = []
-        for w in neighbors[j]:
-            local_cloud.append(list_coord[w])
-        local_data.append(local_cloud)
+    for j in range(num_points_in_protein):
+        local_data.append(local_cloud[j])
         local_label.append(list_labels[j])
     local_data = np.array(local_data)
     local_label = np.array(local_label)
