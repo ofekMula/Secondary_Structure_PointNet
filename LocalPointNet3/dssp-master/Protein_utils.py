@@ -14,7 +14,7 @@ sys.path.append(BASE_DIR)
 # CONSTANTS
 # -----------------------------------------------------------------------------
 
-NUM_PROTEINS = 2500
+NUM_PROTEINS = 20
 
 
 NUM_POINTS = 512
@@ -216,16 +216,20 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
         list_of_residues, list_residue_coord = list_of_residue_coordinates_and_residue_seq(chain_prot)
         full = normalize_coordinates(list_residue_coord)
         _, list_of_labels = list_of_residue_labels(pdb_name, structure, num_chain, chain_prot)
-        list_coord, list_labels = fill_arrays_to_num_points(full, list_of_labels)
-        if (list_coord.shape[0] == 0 or list_labels.shape[0] == 0):
+        if(full.shape[0] != list_of_labels.shape[0]):
+          print("different lengths!")
           os.remove(pdb_name + ".pdb")
           continue
+        #list_coord, list_labels = fill_arrays_to_num_points(full, list_of_labels)
+        #if (list_coord.shape[0] == 0 or list_labels.shape[0] == 0):
+        #  os.remove(pdb_name + ".pdb")
+        #  continue
         os.mkdir("./Proteins_Info/" + pdb_name + "_" + num_chain)
-        out_file_name = save_to_numpy_file(protein_file_name, list_coord, '_data') + '.npy'
+        out_file_name = save_to_numpy_file(protein_file_name, full, '_data') + '.npy'
         os.rename(out_file_name,
                   "./Proteins_Info/" + pdb_name + "_" + num_chain + "/"
                   + pdb_name + '_' + num_chain + '_data.npy')
-        out_file_name = save_to_numpy_file(protein_file_name, list_labels, '_label') + '.npy'
+        out_file_name = save_to_numpy_file(protein_file_name, list_of_labels, '_label') + '.npy'
         os.rename(out_file_name,
                   "./Proteins_Info/" + pdb_name + "_" + num_chain + "/"
                   + pdb_name + '_' + num_chain + '_label.npy')
