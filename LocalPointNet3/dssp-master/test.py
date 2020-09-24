@@ -36,7 +36,7 @@ LOG_FOUT = open(os.path.join(DUMP_DIR, 'log_evaluate.txt'), 'w')
 LOG_FOUT.write(str(FLAGS) + '\n')
 
 NUM_CLASSES = 3
-CLOUD_SIZE=32
+CLOUD_SIZE=8
 NUM_POINTS = 512
 
 def log_string(out_str):
@@ -49,7 +49,7 @@ def evaluate():
     is_training = False
 
     with tf.device('/gpu:' + str(GPU_INDEX)):
-        pointclouds_pl, labels_pl = placeholder_inputs(NUM_POINTS, CLOUD_SIZE)
+        pointclouds_pl, labels_pl = placeholder_inputs(BATCH_SIZE, CLOUD_SIZE)
         is_training_pl = tf.placeholder(tf.bool, shape=())
         print(pointclouds_pl.shape, labels_pl.shape)
 
@@ -140,14 +140,24 @@ def evaluate():
     
     
     os.remove(pdb_name + ".pdb")
+    pred_label = []
+    number_of_points_in_protein = local_data.shape[0]
+    print(number_of_points_in_protein, "points")
+    for j in range(number_of_points_in_protein):
+          feed_dict = {ops['pointclouds_pl']: [local_data[j]],
+          ops['labels_pl']: [local_label[j]],
+          ops['is_training_pl']: is_training}
+          loss_val, pred_val = sess.run([ops['loss'], ops['pred_softmax']],
+                                        feed_dict=feed_dict)
+          pred_residue_label = np.argmax(pred_val, 1)  # BxN
+          #print("PRED_LABEL:\n ", pred_label)
+          pred_label.append(pred_residue_label)
+      
+    pred_label = np.array([pred_label[i][0] for i in range(len(pred_label))])
+    print(len(pred_label))
+    print(pred_label)
 
-    feed_dict = {ops['pointclouds_pl']: local_data,
-                 ops['labels_pl']: local_label,
-                 ops['is_training_pl']: is_training}
-    loss_val, pred_val = sess.run([ops['loss'], ops['pred_softmax']],
-                                  feed_dict=feed_dict)
-    pred_label = np.argmax(pred_val, 1)  # BxN
-    print("PRED_LABEL:\n ", pred_label)
+
 
     fout_out.write(out_data_label_filename + '\n')
     fout_out.close()
