@@ -95,7 +95,7 @@ def normalize_coordinates(list_residues_coord):
 
 # protein_path for example: 11as_A
 def save_to_numpy_file(protein_name, array_to_save, string):
-    out_file_name = ./' + protein_name + string  # protein name : 11as_A.numpy
+    out_file_name = './' + protein_name + string  # protein name : 11as_A.numpy
     np.save(out_file_name, array_to_save)
     return out_file_name
 
