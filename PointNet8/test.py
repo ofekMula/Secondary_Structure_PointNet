@@ -100,6 +100,8 @@ def evaluate():
     print(pdb_name)
     list_of_residues, list_residue_coord = list_of_residue_coordinates_and_residue_seq(chain_prot)
     full = normalize_coordinates(list_residue_coord)
+    num_of_residues_in_protein = len(full)
+    print (num_of_residues_in_protein, "residues")
     ##We try (-1, -1, ..., -1) lables (garbage)
     list_of_labels = np.array([1 for i in full])
     list_coord, list_labels = fill_arrays_to_num_points(full, list_of_labels)
@@ -122,7 +124,8 @@ def evaluate():
     loss_val, pred_val = sess.run([ops['loss'], ops['pred_softmax']],
                                   feed_dict=feed_dict)
     pred_label = np.argmax(pred_val, 2)  # BxN
-    print("PRED_LABEL:\n ", pred_label)
+    pred_label = pred_label[0][0:num_of_residues_in_protein]
+    print("pred_label (0-2):\n ", pred_label)
 
     fout_out.write(out_data_label_filename + '\n')
     fout_out.close()
