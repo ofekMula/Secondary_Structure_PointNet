@@ -2,24 +2,14 @@ import sys
 import protein_parser
 import os
 import random
-import argparse
-# from Bio.PDB.DSSP import DSSP
 import numpy as np
 from Bio.PDB import *
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.dirname(BASE_DIR)
-sys.path.append(BASE_DIR)
 
 # -----------------------------------------------------------------------------
 # CONSTANTS
 # -----------------------------------------------------------------------------
-
 NUM_PROTEINS = 2500
-
-
 NUM_POINTS = 512
-
 label_dict = {'H': 0,
               'I': 1,
               'G': 2,
@@ -29,35 +19,11 @@ label_dict = {'H': 0,
               'T': 6,
               '-': 7  # None
               }
-
-residue_to_attributes = {'C': np.array([28.0, 7.4, 26.3, 40.3, 7.4, 0]),
-                         'D': np.array([31.3, 100.0, 0.0, 17.5, 45.0, 0]),
-                         'S': np.array([18.1, 32.1, 34.8, 1.9, 40.5, 0]),
-                         'Q': np.array([51.3, 45.7, 34.4, 0.0, 43.6, 0]),
-                         'K': np.array([68.0, 64.2, 86.9, 43.5, 54.3, 0]),
-                         'I': np.array([63.6, 0.0, 39.2, 83.6, 7.5, 0]),
-                         'P': np.array([41.0, 21.0, 40.2, 73.5, 66.2, 0]),
-                         'T': np.array([34.0, 21.0, 45.7, 1.9, 35.3, 0]),
-                         'F': np.array([77.2, 1.2, 38.6, 76.1, 5.5, 1]),
-                         'N': np.array([35.4, 63.0, 31.3, 2.4, 46.1, 0]),
-                         'G': np.array([0.0, 37.0, 38.5, 2.7, 54.0, 0]),
-                         'H': np.array([49.2, 43.2, 59.2, 23.1, 28.1, 0]),
-                         'L': np.array([63.6, 0.0, 38.6, 57.6, 10.1, 0]),
-                         'R': np.array([70.8, 51.9, 100.0, 22.6, 50.1, 0]),
-                         'W': np.array([100.0, 4.9, 37.7, 100.0, 13.8, 1]),
-                         'A': np.array([15.9, 25.9, 39.2, 23.1, 37.4, 0]),
-                         'V': np.array([47.7, 8.6, 38.5, 49.6, 19.6, 0]),
-                         'E': np.array([47.2, 93.8, 3.2, 17.8, 48.6, 0]),
-                         'Y': np.array([78.5, 9.9, 34.4, 70.8, 30.1, 1]), 'M': np.array([62.8, 4.9, 35.7, 44.3, 3.9, 0])
-                         }
-
-
 # -----------------------------------------------------------------------------
 # PROCESS PROTEINS
 # -----------------------------------------------------------------------------
 ##  We get a protein like "1a09", a chain number like 'A'.
 ##  That we download the pdb file & parse it.
-
 
 def download_and_parse_pdb(pdb_name, num_chain):
     print("parsing_file:", pdb_name, num_chain)
@@ -119,16 +85,6 @@ def list_of_residue_labels(pdb_name, structure, num_chain, chain_prot):
     return secondary_struct, label_array
 
 
-def create_cord_label_array(coordinates, labels):
-    if len(coordinates) != len(labels):
-        print("ERROR - different number of coordinates and colors")
-    else:
-        arr = np.array([])
-        for i in range(0, len(coordinates)):
-            arr = np.array(arr, [coordinates[i], labels[i]])  # add current coordinates with there color
-        return arr
-
-
 ## receives list_residues
 def normalize_coordinates(list_residues_coord):
   #make every coordinate between -1 and 1
@@ -136,32 +92,6 @@ def normalize_coordinates(list_residues_coord):
   xyz_max = np.amax(coord_abs, axis=0)[0:3]
   list_residues_coord[:, 0:3] /= xyz_max
   return list_residues_coord
-
-
-## receives the residues sequence and noralizes
-## zi = (xi - min(x))/(max(x)-min(x))
-def normalize_attributes(list_residues_sequence):
-    attribute_list = np.array([residue_to_attributes[c] for c in list_residues_sequence])
-    attribute_max = np.amax(attribute_list, axis=0)[0:6]
-    attribute_min = np.amin(attribute_list, axis=0)[0:6]
-
-    attribute_list[:, 0:6] -= attribute_min
-    attribute_list[:, 0:6] /= (attribute_max - attribute_min)
-    return attribute_list
-
-
-def normalize_full_attributes(list_residues_sequence, list_residues_coord):
-    attribute_list = normalize_attributes(list_residues_sequence)
-    list_residues_coord = normalize_coordinates(list_residues_coord)
-    if len(attribute_list) != len(list_residues_coord):
-        print("ERROR: Protein_Utils, normalize_full_attributes: attr len != len of coordinates")
-        return -1
-    else:
-        len_arr = len(attribute_list)
-        full_attr_array = np.array(
-            [np.concatenate((list_residues_coord[i], attribute_list[i])) for i in range(len_arr)])
-        return full_attr_array
-
 
 # protein_path for example: Area_1/11as_A/Protein
 def save_to_numpy_file(protein_path, array_to_save, string):
