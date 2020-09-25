@@ -1,20 +1,14 @@
 import argparse
 import protein_utils
 import tensorflow as tf
-
-
+import os
 import sys
 from pointnet_cls import *
 import local_point_clouds
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.dirname(BASE_DIR)
-sys.path.append(BASE_DIR)
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
 parser.add_argument('--batch_size', type=int, default=1, help='Batch Size during training [default: 1]')
-parser.add_argument('--num_point', type=int, default=512, help='Point number [default: 512]')
 parser.add_argument('--model_path', required=True, help='model checkpoint file path')
 parser.add_argument('--dump_dir', required=True, help='dump folder path')
 parser.add_argument('--output_file', required=True, help='TXT filename, filelist, each line is an output for a room')
@@ -23,7 +17,6 @@ parser.add_argument('--input_pdb_chain', required=True, help='PDB-id_chain filen
 FLAGS = parser.parse_args()
 
 BATCH_SIZE = FLAGS.batch_size
-NUM_POINT = FLAGS.num_point
 MODEL_PATH = FLAGS.model_path
 GPU_INDEX = FLAGS.gpu
 DUMP_DIR = FLAGS.dump_dir
