@@ -29,7 +29,6 @@ LOG_FOUT.write(str(FLAGS) + '\n')
 
 NUM_CLASSES = 3
 CLOUD_SIZE=8
-NUM_POINTS = 512
 
 def log_string(out_str):
     LOG_FOUT.write(out_str + '\n')
