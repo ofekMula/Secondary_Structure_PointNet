@@ -125,7 +125,7 @@ def evaluate():
                                   feed_dict=feed_dict)
     pred_label = np.argmax(pred_val, 2)  # BxN
     pred_label = pred_label[0][0:num_of_residues_in_protein]
-    print("pred_label (0-2):\n ", pred_label)
+    print("pred_label (0-7):\n ", pred_label)
 
     fout_out.write(out_data_label_filename + '\n')
     fout_out.close()
