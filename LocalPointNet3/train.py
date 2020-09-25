@@ -317,8 +317,7 @@ def eval_one_epoch(sess, ops, test_writer):
             total_seen_class[l] += 1
             total_correct_class[l] += (pred_val[i - start_idx] == l)
 
-        if (batch_idx == num_batches - 1):
-            print("predictions for 100 points:\n", pred_val)
+        
 
     log_string('eval mean loss: %f' % (loss_sum / float(total_seen)))
     log_string('eval accuracy: %f' % (total_correct / float(total_seen)))
