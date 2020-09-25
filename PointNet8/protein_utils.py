@@ -9,7 +9,7 @@ from Bio.PDB import *
 # -----------------------------------------------------------------------------
 # CONSTANTS
 # -----------------------------------------------------------------------------
-NUM_PROTEINS = 2500
+NUM_PROTEINS = 20
 NUM_POINTS = 512
 label_dict = {'H': 0,
               'I': 1,
@@ -96,9 +96,9 @@ def normalize_coordinates(list_residues_coord):
   return list_residues_coord
 
 
-# protein_path for example: Area_1/11as_A/Protein
-def save_to_numpy_file(protein_path, array_to_save, string):
-    out_file_name = BASE_DIR + '/' + str.split(protein_path, '/')[1] + string  # protein name : 11as_A.numpy
+# protein_namr for example: 11as_A
+def save_to_numpy_file(protein_name, array_to_save, string):
+    out_file_name = './' + protein_name + string  # protein name : 11as_A.numpy
     np.save(out_file_name, array_to_save)
     return out_file_name
 
@@ -142,7 +142,7 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
 
 
         ##Now creating the file
-        protein_file_name = 'Area_1/' + pdb_name + '_' + num_chain + '/Protein'
+        protein_file_name = pdb_name + '_' + num_chain
         structure, chain_prot = download_and_parse_pdb(pdb_name, num_chain)
         if (isinstance(structure, int)):
           print("ERROR: pdb not found")
