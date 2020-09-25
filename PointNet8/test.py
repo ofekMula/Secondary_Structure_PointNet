@@ -25,6 +25,7 @@ if not os.path.exists(DUMP_DIR): os.mkdir(DUMP_DIR)
 LOG_FOUT = open(os.path.join(DUMP_DIR, 'log_evaluate.txt'), 'w')
 LOG_FOUT.write(str(FLAGS) + '\n')
 
+NUM_POINT = 512
 NUM_CLASSES = 8
 
 
