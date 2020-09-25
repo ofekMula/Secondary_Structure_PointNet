@@ -1,22 +1,12 @@
 import argparse
 import numpy as np
 import tensorflow as tf
-import socket
 import local_point_clouds
-import os
-import sys
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.dirname(BASE_DIR)
-sys.path.append(BASE_DIR)
-sys.path.append(ROOT_DIR)
-sys.path.append(os.path.join(ROOT_DIR, 'utils'))
 from LocalPointNet3.pointnet_cls import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
 parser.add_argument('--log_dir', default='log', help='Log dir [default: log]')
-parser.add_argument('--num_point', type=int, default=512, help='Point number [default: 4096]')
 parser.add_argument('--max_epoch', type=int, default=50, help='Epoch to run [default: 50]')
 parser.add_argument('--batch_size', type=int, default=24, help='Batch Size during training [default: 24]')
 parser.add_argument('--learning_rate', type=float, default=0.001, help='Initial learning rate [default: 0.001]')
@@ -24,30 +14,26 @@ parser.add_argument('--momentum', type=float, default=0.9, help='Initial learnin
 parser.add_argument('--optimizer', default='adam', help='adam or momentum [default: adam]')
 parser.add_argument('--decay_step', type=int, default=300000, help='Decay step for lr decay [default: 300000]')
 parser.add_argument('--decay_rate', type=float, default=0.5, help='Decay rate for lr decay [default: 0.5]')
+parser.add_argument('--num_proteins',type=int,default=1000,help='number of proteins from db [default: 1000]')
 FLAGS = parser.parse_args()
 
 BATCH_SIZE = FLAGS.batch_size
-NUM_POINT = FLAGS.num_point
 MAX_EPOCH = FLAGS.max_epoch
-NUM_POINT = FLAGS.num_point
 BASE_LEARNING_RATE = FLAGS.learning_rate
 GPU_INDEX = FLAGS.gpu
 MOMENTUM = FLAGS.momentum
 OPTIMIZER = FLAGS.optimizer
 DECAY_STEP = FLAGS.decay_step
 DECAY_RATE = FLAGS.decay_rate
-
+NUM_PROTEINS = FLAGS.num_proteins
 LOG_DIR = FLAGS.log_dir
+
 if not os.path.exists(LOG_DIR): os.mkdir(LOG_DIR)
-os.system('cp model.py %s' % (LOG_DIR))  # bkp of model def
-os.system('cp train.py %s' % (LOG_DIR))  # bkp of train procedure
 LOG_FOUT = open(os.path.join(LOG_DIR, 'log_train.txt'), 'w')
 LOG_FOUT.write(str(FLAGS) + '\n')
 
-MAX_NUM_POINT = 512  ### do we need any adaptation for our structure of points in each protein?
 CLOUD_SIZE = 8
 NUM_CLASSES = 3  ### need to fit for our caser
-
 new_label_dictionary = {
     0: 0, 1: 0, 2: 0,  # helix
     3: 1, 4: 1,  # sheet
@@ -56,16 +42,9 @@ new_label_dictionary = {
 
 BN_INIT_DECAY = 0.5
 BN_DECAY_DECAY_RATE = 0.5
-# BN_DECAY_DECAY_STEP = float(DECAY_STEP * 2)
 BN_DECAY_DECAY_STEP = float(DECAY_STEP)
 BN_DECAY_CLIP = 0.99
 
-HOSTNAME = socket.gethostname()
-
-'''
-we can divide the db for Areas, and each area will containe Proteins(=rooms) ,
-each protein contains amino acid ( = object in a room),each object is a set of atoms(=point clouds)
-'''
 
 # Load protein data
 data_batch_list = []
@@ -89,26 +68,16 @@ for subdir_info, dirs_info, files_info in os.walk(protein_info_dir):
                 data_batch_list.append(data_batch)
                 label_batch_list.append(label_batch)
 
-# for i in range(len(data_batch_list)):
-#  print(data_batch_list[i].shape, label_batch_list[i].shape)
-
 data_batches = np.array(data_batch_list)
 label_batches = np.array(label_batch_list)
-
-# print(data_batches[1].shape)
-
-
 # JUST FOR CHECK  - DELETE THE FOLLOING 2 lines
-data_batches = data_batches[0:1000]
-label_batches = label_batches[0:1000]
-
+if(data_batches.shape[0] > NUM_PROTEINS ):
+    data_batches = data_batches[0:NUM_PROTEINS]
+    label_batches = label_batches[0:NUM_PROTEINS]
 # print(data_batches.shape) #NUM_PROTEINS X num_point_in_protein X 3
 # print(label_batches.shape) #NUM_PROTEINS X num_point_in_protein
-assert (data_batches.shape[0] == label_batches.shape[0])
-NUM_PROTEINS = data_batches.shape[0]
 
-print(NUM_PROTEINS)
-
+NUM_PROTEINS=data_batches.shape[0]
 # Centerelizing each proteing to (0,0,0)
 for i in range(NUM_PROTEINS):
     xyz_mean = np.mean(data_batches[i], axis=0)[0:3]
@@ -139,8 +108,7 @@ total_number_of_points = local_data.shape[0]
 # division of proteins to test and train indexs
 train_idxs = []
 test_idxs = []
-threshold_idx = (
-                            total_number_of_points * 5) // 6  # we take the 5/6 of the total number of proteins, and the rest to test
+threshold_idx = (total_number_of_points * 5) // 6  # we take the 5/6 of the total number of proteins, and the rest to test
 train_idxs = range(threshold_idx)
 test_idxs = range(threshold_idx, total_number_of_points)
 train_data = local_data[train_idxs, ...]
@@ -197,7 +165,7 @@ def train():
         with tf.device('/gpu:' + str(GPU_INDEX)):
             # pointclouds_pl size: batch_size x num_point x 9
             # labels_pl size: batch_size x num_point
-            pointclouds_pl, labels_pl = placeholder_inputs(BATCH_SIZE, CLOUD_SIZE)  # in model.py
+            pointclouds_pl, labels_pl = placeholder_inputs(BATCH_SIZE, CLOUD_SIZE)
             print(pointclouds_pl.shape, labels_pl.shape)
             is_training_pl = tf.placeholder(tf.bool, shape=())
 
@@ -209,8 +177,8 @@ def train():
 
             # why do we do convolution on empty tensor
             # Get model and loss
-            pred, end_points = get_model(pointclouds_pl, is_training_pl, bn_decay=bn_decay)  # model.py (hard coded)
-            loss = get_loss(pred, labels_pl, end_points)  # model.py (not hard coded :))
+            pred, end_points = get_model(pointclouds_pl, is_training_pl, bn_decay=bn_decay)
+            loss = get_loss(pred, labels_pl, end_points)
             tf.summary.scalar('loss', loss)
             print(pred.shape, loss.shape)
 
