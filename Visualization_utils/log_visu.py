@@ -1,9 +1,8 @@
 import matplotlib.pyplot as plt
 import argparse
+
 parser = argparse.ArgumentParser()
-
-
-parser.add_argument('--pointNet_model',type=int,default=0,help='model[0= LocalPointnet,1= PointNet3 ,2=Pointnet8, deafult=0]')
+parser.add_argument('--pointNet_model',type=int,default=0,help='choose model for visu log[0= LocalPointnet,1= PointNet3 ,2=Pointnet8, deafult=0]')
 FLAGS = parser.parse_args()
 model_dic={0:'LocalPointNet3',
            1:'PointNet3',
