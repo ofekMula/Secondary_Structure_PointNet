@@ -1,7 +1,17 @@
 import matplotlib.pyplot as plt
+import argparse
+parser = argparse.ArgumentParser()
 
-LOG_FILE_PATH="./log/log_train.txt"
-LOG_FILE_PATH2="./log6/log_train.txt"
+
+parser.add_argument('--pointNet_model',type=int,default=0,help='model[0= LocalPointnet,1= PointNet3 ,2=Pointnet8, deafult=0]')
+FLAGS = parser.parse_args()
+model_dic={0:'LocalPointNet3',
+           1:'PointNet3',
+           2:'Pointnet8'}
+MODEL = FLAGS.pointNet_model
+if MODEL <0 or MODEL > 2 :
+    MODEL = 0
+LOG_FILE_PATH="./"+model_dic[MODEL]+"/log"+"/log_train.txt"
 EPOCH_PREFIX_STR= "****"
 EVAL_MEAN_LOSS="eval mean loss"
 EVAL_ACCURACY="eval accuracy"
