@@ -64,7 +64,7 @@ def download_and_parse_pdb(pdb_name, num_chain):
     pdbl = PDBList()
 
     #  Downloading the file
-    path = "dssp-master"
+    path = '.'
     file_name = pdbl.retrieve_pdb_file(pdb_code=pdb_name, file_format="pdb", pdir=path)
     new_name = path + '/' + pdb_name + '.pdb'
     if (not os.path.isfile(file_name)):
@@ -81,7 +81,7 @@ def download_and_parse_pdb(pdb_name, num_chain):
 
 #  create a num_py array of [x,y,z] coordinates for all atoms.
 def list_of_residue_coordinates_and_residue_seq(chain_prot):
-    res = sample_code.process_chain(chain_prot)
+    res = protein_parser.process_chain(chain_prot)
     seq = res[0]
     backbone = res[1]
     res = np.array([c[2] for c in backbone])
@@ -105,7 +105,7 @@ def list_of_residue_labels(pdb_name, structure, num_chain, chain_prot):
         secondary_structure_of_residue = dssp[a_key][2]
         # find how many atoms in this residue
         for residue in Selection.unfold_entities(chain_prot, 'R'):
-            if (sample_code.is_residue(residue)):
+            if (protein_parser.is_residue(residue)):
                 if residue.get_id()[1] == residue_number:
                     secondary_struct += secondary_structure_of_residue
                     if secondary_structure_of_residue in label_dict:
