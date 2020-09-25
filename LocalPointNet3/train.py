@@ -232,7 +232,7 @@ def train():
             eval_one_epoch(sess, ops, test_writer)
 
             # Save the variables to disk.
-            if epoch % 10 == 0:
+            if epoch % 2 == 0:
                 save_path = saver.save(sess, os.path.join(LOG_DIR, "model.ckpt"))
                 log_string("Model saved in file: %s" % save_path)
 
@@ -289,7 +289,7 @@ def eval_one_epoch(sess, ops, test_writer):
     total_correct_class = [0 for _ in range(NUM_CLASSES)]
 
     log_string('----')
-    current_data = test_data[:, 0:NUM_POINT, :]
+    current_data = test_data[:, :, :]
     current_label = np.squeeze(test_label)
 
     file_size = current_data.shape[0]
