@@ -1,6 +1,14 @@
 import matplotlib.pyplot as plt
 import argparse
 
+"""
+this file is for plotting the data written in the log_train.txt file ( created in the train process)
+three plots will be created :
+accuracy vs. num of epoches
+mean_loss vs . number of epoches
+avg accuracy per avg class vs. num of epoches
+"""
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--pointNet_model',type=int,default=0,help='choose model for visu log[0= LocalPointnet,1= PointNet3 ,2=Pointnet8, deafult=0]')
 FLAGS = parser.parse_args()

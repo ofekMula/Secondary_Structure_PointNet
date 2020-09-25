@@ -9,6 +9,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
+
+"""
+this file is for plotting the histogram of secondary structure inside the protein database.
+depends on your choose of the model in the the command line arguments, 
+it plots the histogram of secondary structure in division of 8 or 3 classes 
+"""
 new_label_dictionary = {
     0: 0, 1: 0, 2: 0,  # helix
     3: 1, 4: 1,  # sheet
