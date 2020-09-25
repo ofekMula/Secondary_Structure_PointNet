@@ -66,7 +66,7 @@ def download_and_parse_pdb(pdb_name, num_chain):
     pdbl = PDBList()
 
     #  Downloading the file
-    path = "dssp-master"
+    path = '.'
     file_name = pdbl.retrieve_pdb_file(pdb_code=pdb_name, file_format="pdb", pdir=path)
     new_name = path + '/' + pdb_name + '.pdb'
     if (not os.path.isfile(file_name)):
