@@ -1,15 +1,9 @@
 import argparse
-import protein_utils
+from protein_utils import *
 import tensorflow as tf
 
-
 import sys
-from pointnet_cls import *
-import local_point_clouds
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.dirname(BASE_DIR)
-sys.path.append(BASE_DIR)
+from pointnet_seg import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
@@ -35,8 +29,7 @@ LOG_FOUT = open(os.path.join(DUMP_DIR, 'log_evaluate.txt'), 'w')
 LOG_FOUT.write(str(FLAGS) + '\n')
 
 NUM_CLASSES = 3
-CLOUD_SIZE=8
-NUM_POINTS = 512
+
 
 def log_string(out_str):
     LOG_FOUT.write(out_str + '\n')
@@ -48,7 +41,7 @@ def evaluate():
     is_training = False
 
     with tf.device('/gpu:' + str(GPU_INDEX)):
-        pointclouds_pl, labels_pl = placeholder_inputs(BATCH_SIZE, CLOUD_SIZE)
+        pointclouds_pl, labels_pl = placeholder_inputs(BATCH_SIZE, NUM_POINT)
         is_training_pl = tf.placeholder(tf.bool, shape=())
         print(pointclouds_pl.shape, labels_pl.shape)
 
@@ -102,61 +95,35 @@ def evaluate():
             flag = 1
             continue
 
-    structure, chain_prot = protein_utils.download_and_parse_pdb(pdb_name, num_chain)
+    structure, chain_prot = download_and_parse_pdb(pdb_name, num_chain)
     if isinstance(structure, int):
         print("ERROR: pdb not found")
         sys.exit()
     print(pdb_name)
-    list_of_residues, list_residue_coord = protein_utils.list_of_residue_coordinates_and_residue_seq(chain_prot)
-    full = protein_utils.normalize_coordinates(list_residue_coord)
+    list_of_residues, list_residue_coord = list_of_residue_coordinates_and_residue_seq(chain_prot)
+    full = normalize_coordinates(list_residue_coord)
     ##We try (-1, -1, ..., -1) lables (garbage)
     list_of_labels = np.array([1 for i in full])
-    #list_coord, list_labels = protein_utils.fill_arrays_to_num_points(full, list_of_labels)
-    list_coord, list_labels = full, list_of_labels
+    list_coord, list_labels = fill_arrays_to_num_points(full, list_of_labels)
     print(list_coord.shape, list_labels.shape)
-    
+
     #Centerelizing the proteing to (0,0,0)
     xyz_mean = np.mean(list_coord, axis=0)[0:3]
     list_coord[:, 0:3] -= xyz_mean
-
-    #Instead of n X 3, we want to have n*32*3
-    local_data = []
-    local_label = []
-    local_cloud, _ = local_point_clouds.build_local_point_cloud(list_coord, CLOUD_SIZE)
-    num_points_in_protein = list_coord.shape[0]
-    #neigbors is of shape num_of_points X 32.
-    for j in range(num_points_in_protein):
-        local_data.append(local_cloud[j])
-        local_label.append(list_labels[j])
-    local_data = np.array(local_data)
-    local_label = np.array(local_label)
-    print(local_data.shape)
-    print(local_label.shape)
-
-    #new_diminsional_coord_list = np.array([list_coord])
-    #new_diminsional_label_list = np.array([list_labels])
-    #print(new_diminsional_coord_list.shape, new_diminsional_label_list.shape)
     
     
+    new_diminsional_coord_list = np.array([list_coord])
+    new_diminsional_label_list = np.array([list_labels])
+    print(new_diminsional_coord_list.shape, new_diminsional_label_list.shape)
     os.remove(pdb_name + ".pdb")
-    pred_label = []
-    number_of_points_in_protein = local_data.shape[0]
-    print(number_of_points_in_protein, "points")
-    for j in range(number_of_points_in_protein):
-          feed_dict = {ops['pointclouds_pl']: [local_data[j]],
-          ops['labels_pl']: [local_label[j]],
-          ops['is_training_pl']: is_training}
-          loss_val, pred_val = sess.run([ops['loss'], ops['pred_softmax']],
-                                        feed_dict=feed_dict)
-          pred_residue_label = np.argmax(pred_val, 1)  # BxN
-          #print("PRED_LABEL:\n ", pred_label)
-          pred_label.append(pred_residue_label)
-      
-    pred_label = np.array([pred_label[i][0] for i in range(len(pred_label))])
-    print(len(pred_label))
-    print(pred_label)
 
-
+    feed_dict = {ops['pointclouds_pl']: new_diminsional_coord_list,
+                 ops['labels_pl']: new_diminsional_label_list,
+                 ops['is_training_pl']: is_training}
+    loss_val, pred_val = sess.run([ops['loss'], ops['pred_softmax']],
+                                  feed_dict=feed_dict)
+    pred_label = np.argmax(pred_val, 2)  # BxN
+    print("PRED_LABEL:\n ", pred_label)
 
     fout_out.write(out_data_label_filename + '\n')
     fout_out.close()
