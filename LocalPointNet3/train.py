@@ -3,7 +3,6 @@ import numpy as np
 import tensorflow as tf
 import socket
 import local_point_clouds
-
 import os
 import sys
 
