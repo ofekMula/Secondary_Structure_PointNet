@@ -203,7 +203,7 @@ def train():
             eval_one_epoch(sess, ops, test_writer)
 
             # Save the variables to disk.
-            if epoch % 10 == 0:
+            if epoch % 2 == 0:
                 save_path = saver.save(sess, os.path.join(LOG_DIR, "model.ckpt"))
                 log_string("Model saved in file: %s" % save_path)
 
@@ -222,7 +222,8 @@ def train_one_epoch(sess, ops, train_writer):
     loss_sum = 0
 
     for batch_idx in range(num_batches):
-        print('Current batch/total batch num: %d/%d' % (batch_idx, num_batches))
+        if (batch_idx % 10 == 0):
+            print('Current batch/total batch num: %d/%d' % (batch_idx, num_batches))
         start_idx = batch_idx * BATCH_SIZE
         end_idx = (batch_idx + 1) * BATCH_SIZE
 
@@ -260,7 +261,8 @@ def eval_one_epoch(sess, ops, test_writer):
     num_batches = file_size // BATCH_SIZE
     # num_batches = 2 ###added only for slicing training time. will be deleted later
     for batch_idx in range(num_batches):
-        print('Current batch/total batch num: %d/%d' % (batch_idx, num_batches))
+        if (batch_idx % 10 == 0):
+            print('Current batch/total batch num: %d/%d' % (batch_idx, num_batches))
         start_idx = batch_idx * BATCH_SIZE
         end_idx = (batch_idx + 1) * BATCH_SIZE
 
@@ -281,8 +283,7 @@ def eval_one_epoch(sess, ops, test_writer):
                 total_seen_class[l] += 1
                 total_correct_class[l] += (pred_val[i - start_idx, j] == l)
 
-        if (batch_idx == num_batches-1):
-          print("predictions for first protein:\n", pred_val[0])
+       
 
     log_string('eval mean loss: %f' % (loss_sum / float(total_seen / NUM_POINT)))
     log_string('eval accuracy: %f' % (total_correct / float(total_seen)))
