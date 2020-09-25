@@ -1,5 +1,5 @@
 import sys
-import sample_code
+import protein_parser
 import os
 import random
 # from Bio.PDB.DSSP import DSSP
@@ -64,7 +64,7 @@ def download_and_parse_pdb(pdb_name, num_chain):
     pdbl = PDBList()
 
     #  Downloading the file
-    path = "."
+    path = "dssp-master"
     file_name = pdbl.retrieve_pdb_file(pdb_code=pdb_name, file_format="pdb", pdir=path)
     new_name = path + '/' + pdb_name + '.pdb'
     if (not os.path.isfile(file_name)):
