@@ -32,7 +32,7 @@ if not os.path.exists(LOG_DIR): os.mkdir(LOG_DIR)
 LOG_FOUT = open(os.path.join(LOG_DIR, 'log_train.txt'), 'w')
 LOG_FOUT.write(str(FLAGS) + '\n')
 
-MAX_NUM_POINT = 512  ### do we need any adaptation for our structure of points in each protein?
+NUM_POINT = 512  ### do we need any adaptation for our structure of points in each protein?
 NUM_CLASSES = 8  ### need to fit for our caser
 
 BN_INIT_DECAY = 0.5
