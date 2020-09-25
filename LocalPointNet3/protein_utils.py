@@ -96,9 +96,9 @@ def normalize_coordinates(list_residues_coord):
   list_residues_coord[:, 0:3] /= xyz_max
   return list_residues_coord
 
-# protein_path for example: Area_1/11as_A/Protein
-def save_to_numpy_file(protein_path, array_to_save, string):
-    out_file_name = BASE_DIR + '/' + str.split(protein_path, '/')[1] + string  # protein name : 11as_A.numpy
+# protein_name for example: 11as_A
+def save_to_numpy_file(protein_name, array_to_save, string):
+    out_file_name = './' + protein_name + string  # protein name : 11as_A.numpy
     np.save(out_file_name, array_to_save)
     return out_file_name
 
@@ -142,7 +142,7 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
 
 
         ##Now creating the file
-        protein_file_name = 'Area_1/' + pdb_name + '_' + num_chain + '/Protein'
+        protein_file_name = pdb_name + '_' + num_chain
         structure, chain_prot = download_and_parse_pdb(pdb_name, num_chain)
         if (isinstance(structure, int)):
           print("ERROR: pdb not found")
@@ -154,10 +154,6 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
           print("different lengths!")
           os.remove(pdb_name + ".pdb")
           continue
-        #list_coord, list_labels = fill_arrays_to_num_points(full, list_of_labels)
-        #if (list_coord.shape[0] == 0 or list_labels.shape[0] == 0):
-        #  os.remove(pdb_name + ".pdb")
-        #  continue
         os.mkdir("./Proteins_Info/" + pdb_name + "_" + num_chain)
         out_file_name = save_to_numpy_file(protein_file_name, full, '_data') + '.npy'
         os.rename(out_file_name,
@@ -174,28 +170,6 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
         if (number_of_structures % 10 == 0):
           print("\t\t\tNUMBER OF STRUCTURES = ", number_of_structures)
 
-
-# Gets list_coord(327X9) and list_labels(327) numpy.
-# Duplicates random indexes in the arrays correspondly.
-# If arrays' length is bigger than NUM_POINTS, we remove correspond values.
-def fill_arrays_to_num_points(list_coord, list_labels):
-    length = list_coord.shape[0]
-    if (length != list_labels.shape[0]):
-        print("ERROR: fill_arrays() with different lengths")
-        return np.array([]), np.array([])
-    # CASE1: fill in points
-    if (length < NUM_POINTS):
-        to_fill = NUM_POINTS - length
-        for i in range(to_fill):
-            index = random.randint(0, length - 1)
-            list_coord = np.append(list_coord, [list_coord[index]], axis=0)
-            list_labels = np.append(list_labels, [list_labels[index]], axis=0)
-    # CASE2: remove somve points
-    if (length > NUM_POINTS):
-        list_coord = list_coord[0:NUM_POINTS]
-        list_labels = list_labels[0:NUM_POINTS]
-
-    return list_coord, list_labels
 
 
 if __name__ == "__main__":
