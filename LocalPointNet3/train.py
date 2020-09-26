@@ -2,7 +2,7 @@ import argparse
 import numpy as np
 import tensorflow as tf
 import local_point_clouds
-from LocalPointNet3.pointnet_cls import *
+from pointnet_cls import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
