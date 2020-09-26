@@ -4,12 +4,15 @@ import os
 import random
 import numpy as np
 from Bio.PDB import *
+import argparse
 
-
+parser = argparse.ArgumentParser()
+parser.add_argument('--num_proteins', type=int, default=100, help='number of proteins to download [deafult: 100]')
+FLAGS, args = parser.parse_known_args()
+NUM_PROTEINS = FLAGS.num_proteins
 # -----------------------------------------------------------------------------
 # CONSTANTS
 # -----------------------------------------------------------------------------
-NUM_PROTEINS = 20
 NUM_POINTS = 512
 label_dict = {'H': 0,
               'I': 1,
@@ -20,6 +23,9 @@ label_dict = {'H': 0,
               'T': 6,
               '-': 7  # None
               }
+
+
+
 
 # -----------------------------------------------------------------------------
 # PROCESS PROTEINS

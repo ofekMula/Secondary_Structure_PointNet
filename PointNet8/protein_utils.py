@@ -4,8 +4,12 @@ import os
 import random
 import numpy as np
 from Bio.PDB import *
+import argparse
 
-
+parser = argparse.ArgumentParser()
+parser.add_argument('--num_proteins', type=int, default=100, help='number of proteins to download [deafult: 100]')
+FLAGS, args = parser.parse_known_args()
+NUM_PROTEINS = FLAGS.num_proteins
 # -----------------------------------------------------------------------------
 # CONSTANTS
 # -----------------------------------------------------------------------------
