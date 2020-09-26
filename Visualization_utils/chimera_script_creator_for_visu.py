@@ -85,12 +85,7 @@ def make_script_for_visu_predictions(chain, labels, output_name=PDB_NAME + "_" +
 
 
 if __name__ == "__main__":
-
-    pdb_name = "5w1o"
-    pdb_name = "3h3m"
-    num_chain = 'A'
-    # num_chain='L'
-    pdb_filename = pdb_name + ".pdb"
+    #pdb_filename = pdb_name + ".pdb"
     structure, chain_obj = download_and_parse_pdb(PDB_NAME, NUM_CHAIN)
     if NPY_FILENAME == "":
         _, labels = list_of_residue_labels(PDB_NAME, structure, NUM_CHAIN, chain_obj)
