@@ -6,7 +6,6 @@ from pointnet_seg import *
 import os
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
-parser.add_argument('--batch_size', type=int, default=1, help='Batch Size during training [default: 1]')
 parser.add_argument('--model_path', required=True, help='model checkpoint file path')
 parser.add_argument('--dump_dir', required=True, help='dump folder path')
 parser.add_argument('--output_file', required=True, help='TXT filename, filelist, each line is an output for a room')
@@ -14,7 +13,7 @@ parser.add_argument('--input_pdb_chain', required=True, help='PDB-id_chain filen
 
 FLAGS = parser.parse_args()
 
-BATCH_SIZE = FLAGS.batch_size
+BATCH_SIZE = 1
 MODEL_PATH = FLAGS.model_path
 GPU_INDEX = FLAGS.gpu
 DUMP_DIR = FLAGS.dump_dir
