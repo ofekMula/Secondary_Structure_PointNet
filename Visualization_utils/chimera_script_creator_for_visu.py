@@ -1,9 +1,10 @@
+import sys
 import os
 from Bio.PDB import Selection
 import numpy as np
+sys.path.append("../LocalPointNet3")
 from protein_utils import *
 import argparse
-
 """
 this file is for creating chimera script for coloring a protein by its secondary structure
 please be ware of the command line arguments 
