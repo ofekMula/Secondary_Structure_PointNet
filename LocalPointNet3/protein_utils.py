@@ -14,7 +14,6 @@ PDB file format.
 # -----------------------------------------------------------------------------
 # CONSTANTS
 # -----------------------------------------------------------------------------
-NUM_POINTS = 512 #
 label_dict = {'H': 0,
               'I': 1,
               'G': 2,
@@ -26,18 +25,19 @@ label_dict = {'H': 0,
               }
 
 
-
+#Parsing the number of proteins to be added to the database
 parser = argparse.ArgumentParser()
 parser.add_argument('--num_proteins', type=int, default=100, help='number of proteins to download [deafult: 100]')
 FLAGS, args = parser.parse_known_args()
 NUM_PROTEINS = FLAGS.num_proteins
+
 # -----------------------------------------------------------------------------
 # PROCESS PROTEINS
 # -----------------------------------------------------------------------------
 
 """downloads the pdb file and extracts the protein structure from it.
 We get a protein like "1a09", a chain number like 'A'.
-That we download the pdb file & parse it.
+Then we download the pdb file & parse it.
 returns structure, chain_prot """
 def download_and_parse_pdb(pdb_name, num_chain):
     print("parsing_file:", pdb_name, num_chain)
@@ -71,7 +71,9 @@ def list_of_residue_coordinates_and_residue_seq(chain_prot):
 
 
 """returns the labels (string) 
-of secondary structure for each residue."""
+of secondary structure for each residue
+and an array of this labels (using labels_dict).
+"""
 def list_of_residue_labels(pdb_name, structure, num_chain, chain_prot):
     file_data_name = pdb_name + '.pdb'
     model = structure[0]
@@ -86,7 +88,7 @@ def list_of_residue_labels(pdb_name, structure, num_chain, chain_prot):
         # find relevant key in dictionary
         a_key = list(dssp.keys())[i]
         secondary_structure_of_residue = dssp[a_key][2]
-        # find how many atoms in this residue
+        #For each residue, we find the correspoinding label.
         for residue in Selection.unfold_entities(chain_prot, 'R'):
             if (protein_parser.is_residue(residue)):
                 if residue.get_id()[1] == residue_number:
@@ -111,7 +113,7 @@ def normalize_coordinates(list_residues_coord):
   return list_residues_coord
 
 """gets the protein name,array of data (coordinates or labels) and file name
-and write the data to a numpy file format with the given name.
+and writes the data to a numpy file format with the given name.
 protein_name for example: 11as_A"""
 def save_to_numpy_file(protein_name, array_to_save, string):
     out_file_name = './' + protein_name + string  # protein name : 11as_A.numpy
@@ -119,7 +121,7 @@ def save_to_numpy_file(protein_name, array_to_save, string):
     return out_file_name
 
 
-""" saves all the given pdbs into a numpy file array which written to the
+""" saves every given pdb into a numpy file array which written to the
 Protein_Info folder.
 list of pdbs = 'pdbs_list.txt'
 """
@@ -132,6 +134,7 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
     else:
         os.mkdir("Proteins_Info")
 
+    #Parsing pdbid_chainid
     f_read = open(list_of_pdbs, "r")
     number_of_structures = 0
     for line in f_read:
