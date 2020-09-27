@@ -6,6 +6,9 @@ import sys
 from pointnet_cls import *
 import local_point_clouds
 
+#############################################
+## Parsing the flags
+#############################################
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
 parser.add_argument('--model_path', required=True, help='model checkpoint file path')
@@ -29,12 +32,15 @@ LOG_FOUT.write(str(FLAGS) + '\n')
 NUM_CLASSES = 3
 CLOUD_SIZE=8
 
+
 def log_string(out_str):
     LOG_FOUT.write(out_str + '\n')
     LOG_FOUT.flush()
     print(out_str)
 
-
+#############################################
+## Testing the model
+#############################################
 def evaluate():
     is_training = False
 
@@ -110,12 +116,12 @@ def evaluate():
     xyz_mean = np.mean(list_coord, axis=0)[0:3]
     list_coord[:, 0:3] -= xyz_mean
 
-    #Instead of n X 3, we want to have n*32*3
+    #Instead of n X 3, we want to have n*CLOUD_SIZE*3
     local_data = []
     local_label = []
     local_cloud, _ = local_point_clouds.build_local_point_cloud(list_coord, CLOUD_SIZE)
     num_points_in_protein = list_coord.shape[0]
-    #neigbors is of shape num_of_points X 32.
+    #neigbors is of shape num_of_points X CLOUD_SIZE.
     for j in range(num_points_in_protein):
         local_data.append(local_cloud[j])
         local_label.append(list_labels[j])
