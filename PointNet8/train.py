@@ -5,6 +5,10 @@ import os
 import sys
 from pointnet_seg import *
 
+###############################################
+## Parsing the flags
+###############################################
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
 parser.add_argument('--log_dir', default='log', help='Log dir [default: log]')
@@ -39,7 +43,10 @@ BN_INIT_DECAY = 0.5
 BN_DECAY_DECAY_RATE = 0.5
 BN_DECAY_DECAY_STEP = float(DECAY_STEP)
 BN_DECAY_CLIP = 0.99
-# Load protein data
+
+###############################################
+## Loading the protein data
+###############################################
 data_batch_list = []
 label_batch_list = []
 protein_info_dir = "./Proteins_Info"
@@ -61,6 +68,7 @@ for subdir_info, dirs_info, files_info in os.walk(protein_info_dir):
 
 data_batches = np.array(data_batch_list)
 label_batches = np.array(label_batch_list)
+# Use only NUM_PROTEINS
 if(data_batches.shape[0] > NUM_PROTEINS ):
     data_batches = data_batches[0:NUM_PROTEINS]
     label_batches = label_batches[0:NUM_PROTEINS]
@@ -90,6 +98,9 @@ test_data = data_batches[test_idxs, ...]
 test_label = label_batches[test_idxs]
 print(train_data.shape, train_label.shape, test_data.shape, test_label.shape)
 
+###############################################
+## Auxiliary functions
+###############################################
 
 def log_string(out_str):
     LOG_FOUT.write(out_str + '\n')
@@ -130,6 +141,9 @@ def get_bn_decay(batch):
     bn_decay = tf.minimum(BN_DECAY_CLIP, 1 - bn_momentum)
     return bn_decay
 
+###############################################
+## Training process
+###############################################
 
 def train():
     with tf.Graph().as_default():
