@@ -51,7 +51,7 @@ The last model (LocalPointNet3) takes a slightly different approach. Instead of 
 
 visualization of the results:
 
-![alt text](https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/prediction_results.JPG) 
+![alt text](https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/prediction_results.jpg) 
 
 ## future work
 We propose here different suggestions for future improvements for our models.
