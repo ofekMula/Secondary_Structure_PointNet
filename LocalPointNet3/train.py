@@ -4,6 +4,10 @@ import tensorflow as tf
 import local_point_clouds
 from pointnet_cls import *
 
+###############################################
+## Parsing the flags
+###############################################
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
 parser.add_argument('--log_dir', default='log', help='Log dir [default: log]')
@@ -46,7 +50,9 @@ BN_DECAY_DECAY_STEP = float(DECAY_STEP)
 BN_DECAY_CLIP = 0.99
 
 
-# Load protein data
+###############################################
+## Loading the protein data
+###############################################
 data_batch_list = []
 label_batch_list = []
 protein_info_dir = "./Proteins_Info"
@@ -70,7 +76,7 @@ for subdir_info, dirs_info, files_info in os.walk(protein_info_dir):
 
 data_batches = np.array(data_batch_list)
 label_batches = np.array(label_batch_list)
-# JUST FOR CHECK  - DELETE THE FOLLOING 2 lines
+# Use only NUM_PROTEINS
 if(data_batches.shape[0] > NUM_PROTEINS ):
     data_batches = data_batches[0:NUM_PROTEINS]
     label_batches = label_batches[0:NUM_PROTEINS]
@@ -117,6 +123,9 @@ test_data = local_data[test_idxs, ...]
 test_label = local_label[test_idxs]
 print(train_data.shape, train_label.shape, test_data.shape, test_label.shape)
 
+###############################################
+## Auxiliary functions
+###############################################
 
 def log_string(out_str):
     LOG_FOUT.write(out_str + '\n')
@@ -159,12 +168,16 @@ def get_bn_decay(batch):
     bn_decay = tf.minimum(BN_DECAY_CLIP, 1 - bn_momentum)
     return bn_decay
 
+###############################################
+## Training process
+###############################################
+
 
 def train():
     with tf.Graph().as_default():
         with tf.device('/gpu:' + str(GPU_INDEX)):
-            # pointclouds_pl size: batch_size x num_point x 9
-            # labels_pl size: batch_size x num_point
+            # pointclouds_pl size: batch_size x cloud_size x 3
+            # labels_pl size: batch_size x cloud_size
             pointclouds_pl, labels_pl = placeholder_inputs(BATCH_SIZE, CLOUD_SIZE)
             print(pointclouds_pl.shape, labels_pl.shape)
             is_training_pl = tf.placeholder(tf.bool, shape=())
@@ -175,7 +188,6 @@ def train():
             bn_decay = get_bn_decay(batch)  # No hard coding :)
             tf.summary.scalar('bn_decay', bn_decay)
 
-            # why do we do convolution on empty tensor
             # Get model and loss
             pred, end_points = get_model(pointclouds_pl, is_training_pl, bn_decay=bn_decay)
             loss = get_loss(pred, labels_pl, end_points)
