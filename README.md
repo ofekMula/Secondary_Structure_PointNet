@@ -1,7 +1,9 @@
 # Secondary_Structure_PointNet
 protein secondary structure classification using Deep learning with PointNet architecture
-
-![prediction example](https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/pointnet.JPG)![alt text](https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/1w5o_dspp.jpg)
+<p float="left">
+  <img src="https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/pointnet.JPG" width="100" />
+  <img src="https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/1w5o_dspp.jpg" width="100" /> 
+</p>
 
 
 ## Objective
@@ -23,11 +25,10 @@ PointNet architectures accept, as an input, a set of points in the Euclidean spa
 Each point is represented uniquely by its three coordinates (x,y,z) plus extra properties (such as color, normal etc.)
 In this project each protein coverted to a pointcloud.
 For example chain A of 1w3o protein:
-![alt text](https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/1w5o_dspp_2.jpg) 
-
-Converted to:
-![alt text](https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/1w5o_dspp.jpg) 
-
+<p float="left">
+  <img src="https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/1w5o_dspp_2.jpg" width="100" />
+  <img src="https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/1w5o_dspp.jpg" width="100" /> 
+</p>
 
 ## PointNet Arcitecture
 PointNet is a deep learning network of classification geometric 3D data. This network consumes a set of point clouds as an input.
