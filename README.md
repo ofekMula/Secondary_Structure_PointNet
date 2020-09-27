@@ -73,3 +73,4 @@ Created by Charles R. Qi, Hao Su, Kaichun Mo, Leonidas J. Guibas from Stanford U
 * Working with the bioinformatics tools: BioPython,Chimera,Pymol,DSSP.
 * Machine learning concepts: classification,deep learning,Convulotion, neural network,MLP.
 * Machine learning tools : Tensorflow,Numpy,matplotlib.
+* Working with GoogleColab platform.
