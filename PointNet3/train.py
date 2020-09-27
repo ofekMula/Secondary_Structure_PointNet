@@ -3,6 +3,10 @@ import numpy as np
 import tensorflow as tf
 from pointnet_seg import *
 
+###############################################
+## Parsing the flags
+###############################################
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
 parser.add_argument('--log_dir', default='log', help='Log dir [default: log]')
@@ -43,7 +47,9 @@ BN_DECAY_DECAY_RATE = 0.5
 BN_DECAY_DECAY_STEP = float(DECAY_STEP)
 BN_DECAY_CLIP = 0.99
 
-# Load protein data
+###############################################
+## Loading the protein data
+###############################################
 data_batch_list = []
 label_batch_list = []
 protein_info_dir = "./Proteins_Info"
@@ -70,6 +76,7 @@ for subdir_info, dirs_info, files_info in os.walk(protein_info_dir):
 
 data_batches = np.array(data_batch_list)
 label_batches = np.array(label_batch_list)
+# Use only NUM_PROTEINS
 if(data_batches.shape[0] > NUM_PROTEINS ):
     data_batches = data_batches[0:NUM_PROTEINS]
     label_batches = label_batches[0:NUM_PROTEINS]
@@ -105,6 +112,10 @@ def log_string(out_str):
     LOG_FOUT.flush()
     print(out_str)
 
+###############################################
+## Auxiliary functions
+###############################################
+
 ### should work well with np arrays
 def shuffle_data(data, labels):
     """ Shuffle data and labels.
@@ -139,6 +150,11 @@ def get_bn_decay(batch):
         staircase=True)
     bn_decay = tf.minimum(BN_DECAY_CLIP, 1 - bn_momentum)
     return bn_decay
+
+
+###############################################
+## Training process
+###############################################
 
 
 def train():
