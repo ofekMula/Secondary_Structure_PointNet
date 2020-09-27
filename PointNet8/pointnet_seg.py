@@ -15,6 +15,10 @@ def placeholder_inputs(batch_size, num_point):
                                 shape=(batch_size, num_point))
     return pointclouds_pl, labels_pl
 
+"""
+This file implements the PointNet architecture.
+The full architecture is described in the article.
+"""
 
 def get_model(point_cloud, is_training, bn_decay=None):
     """ Classification PointNet, input is BxNx3, output BxNx50 """
