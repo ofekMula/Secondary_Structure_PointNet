@@ -61,7 +61,7 @@ We propose here different suggestions for future improvements for our models.
 3. It would be useful to attack this problem (secondary structure classification) using a different neural network. It would be interesting to compare between the different architectures (for instance - DGCNN, PointNet++, PointConv, SpiderCNN, PointCNN).
 
 ## Credits
-![alt text](https://github.com/charlesq34/pointnet)
-PointNet: Deep Learning on Point Sets for 3D Classification and Segmentation
+<a href="https://github.com/charlesq34/pointne" target="_blank"> PointNet: Deep Learning on Point Sets for 3D Classification and Segmentation
 Created by Charles R. Qi, Hao Su, Kaichun Mo, Leonidas J. Guibas from Stanford University.
+
 ## What we learned
