@@ -6,6 +6,11 @@ import numpy as np
 from Bio.PDB import *
 import argparse
 
+"""
+this script desinged to supply functions for working with proteins which loaded from 
+PDB file format.
+"""
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--num_proteins', type=int, default=100, help='number of proteins to download [deafult: 100]')
 FLAGS, args = parser.parse_known_args()
@@ -26,8 +31,11 @@ label_dict = {'H': 0,
 # -----------------------------------------------------------------------------
 # PROCESS PROTEINS
 # -----------------------------------------------------------------------------
-##  We get a protein like "1a09", a chain number like 'A'.
-##  That we download the pdb file & parse it.
+
+"""downloads the pdb file and extracts the protein structure from it.
+We get a protein like "1a09", a chain number like 'A'.
+Then we download the pdb file & parse it.
+returns structure, chain_prot """
 
 def download_and_parse_pdb(pdb_name, num_chain):
     print("parsing_file:", pdb_name, num_chain)
@@ -50,7 +58,8 @@ def download_and_parse_pdb(pdb_name, num_chain):
     return structure, chain_prot
 
 
-#  create a num_py array of [x,y,z] coordinates for all atoms.
+"""create a num_py array of [x,y,z] coordinates
+ for all c-alpha atoms in the backbone."""
 def list_of_residue_coordinates_and_residue_seq(chain_prot):
     res = protein_parser.process_chain(chain_prot)
     seq = res[0]
@@ -59,7 +68,10 @@ def list_of_residue_coordinates_and_residue_seq(chain_prot):
     return seq, res
 
 
-# create a string of secondary structure for each residue.
+"""returns the labels (string) 
+of secondary structure for each residue
+and an array of this labels (using labels_dict).
+"""
 def list_of_residue_labels(pdb_name, structure, num_chain, chain_prot):
     file_data_name = pdb_name + '.pdb'
     model = structure[0]
@@ -74,7 +86,7 @@ def list_of_residue_labels(pdb_name, structure, num_chain, chain_prot):
         # find relevant key in dictionary
         a_key = list(dssp.keys())[i]
         secondary_structure_of_residue = dssp[a_key][2]
-        # find how many atoms in this residue
+        #For each residue, we find the correspoinding label.
         for residue in Selection.unfold_entities(chain_prot, 'R'):
             if (protein_parser.is_residue(residue)):
                 if residue.get_id()[1] == residue_number:
@@ -89,7 +101,9 @@ def list_of_residue_labels(pdb_name, structure, num_chain, chain_prot):
     return secondary_struct, label_array
 
 
-## receives list_residues
+"""gets the list of coordinates of the c-alpha atoms,
+normalize them to values between -1 to 1.
+returns the normalized coordinates"""
 def normalize_coordinates(list_residues_coord):
   #make every coordinate between -1 and 1
   coord_abs = np.absolute(list_residues_coord)
@@ -97,14 +111,19 @@ def normalize_coordinates(list_residues_coord):
   list_residues_coord[:, 0:3] /= xyz_max
   return list_residues_coord
 
-# protein_path for example: 11as_A
+"""gets the protein name,array of data (coordinates or labels) and file name
+and writes the data to a numpy file format with the given name.
+protein_name for example: 11as_A"""
 def save_to_numpy_file(protein_name, array_to_save, string):
     out_file_name = './' + protein_name + string  # protein name : 11as_A.numpy
     np.save(out_file_name, array_to_save)
     return out_file_name
 
 
-# list of pdbs = "pdbs_list.txt"
+""" saves every given pdb into a numpy file array which written to the
+Protein_Info folder.
+list of pdbs = 'pdbs_list.txt'
+"""
 def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
     proteins_in_Proteins_Info = set()
     if os.path.isdir("Proteins_Info"):
@@ -114,6 +133,7 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
     else:
         os.mkdir("Proteins_Info")
 
+    #Parsing pdbid_chainid
     f_read = open(list_of_pdbs, "r")
     number_of_structures = 0
     for line in f_read:
@@ -172,7 +192,7 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
           print("\t\t\tNUMBER OF STRUCTURES = ", number_of_structures)
 
 
-# Gets list_coord(327X9) and list_labels(327) numpy.
+# Gets list_coord(327X3) and list_labels(327) numpy.
 # Duplicates random indexes in the arrays correspondly.
 # If arrays' length is bigger than NUM_POINTS, we remove correspond values.
 def fill_arrays_to_num_points(list_coord, list_labels):
