@@ -46,7 +46,6 @@ The second model (PointNet3) works the same - but classify each point into one o
 The last model (LocalPointNet3) takes a slightly different approach. Instead of using the entire protein as an input, we take a small neighborhood of each residue (for instance, the 16 closest residues). This neighborhood is normalized and then sent as an input to the classification network - and classified into one of the 3 main classes. The motivation for that model was described in the introduction for this paper - points in the same neighborhood are most likely to have a similar secondary structure.
 
 ## results
-
 ![alt text](https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/%E2%80%8F%E2%80%8Ftable%20results.jpg) 
 
 visualization of the results:
@@ -66,3 +65,11 @@ We propose here different suggestions for future improvements for our models.
 Created by Charles R. Qi, Hao Su, Kaichun Mo, Leonidas J. Guibas from Stanford University.
 
 ## What we learned
+* Adjusting a problem from the biology field to computer science field 
+* Parsing PDB file formats
+* Working with Pointcloud geometric data structure
+* Understanding and modifying deep learning network architecture such as PointNet and fit it to our objective
+* Classification vs. semantic segmentation tasks.
+* Working with the bioinformatics tools: BioPython,Chimera,Pymol,DSSP.
+* Machine learning concepts: classification,deep learning,Convulotion, neural network,MLP.
+* Machine learning tools : Tensorflow,Numpy,matplotlib.
