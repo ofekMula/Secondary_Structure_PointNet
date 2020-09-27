@@ -4,6 +4,10 @@ import tensorflow as tf
 import sys
 from pointnet_seg import *
 import os
+
+#############################################
+## Parsing the flags
+#############################################
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
 parser.add_argument('--model_path', required=True, help='model checkpoint file path')
@@ -33,6 +37,9 @@ def log_string(out_str):
     LOG_FOUT.flush()
     print(out_str)
 
+#############################################
+## Testing the model
+#############################################
 
 def evaluate():
     is_training = False
