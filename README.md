@@ -65,10 +65,10 @@ We propose here different suggestions for future improvements for our models.
 Created by Charles R. Qi, Hao Su, Kaichun Mo, Leonidas J. Guibas from Stanford University.
 
 ## What we learned
-* Adjusting a problem from the biology field to computer science field 
-* Parsing PDB file formats
-* Working with Pointcloud geometric data structure
-* Understanding and modifying deep learning network architecture such as PointNet and fit it to our objective
+* Adjusting a problem from the biology field to computer science field.
+* Parsing PDB file formats.
+* Working with Pointcloud geometric data structure.
+* Understanding and modifying deep learning network architecture such as PointNet and fit it to our objective.
 * Classification vs. semantic segmentation tasks.
 * Working with the bioinformatics tools: BioPython,Chimera,Pymol,DSSP.
 * Machine learning concepts: classification,deep learning,Convulotion, neural network,MLP.
