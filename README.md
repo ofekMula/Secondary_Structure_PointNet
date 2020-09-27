@@ -47,7 +47,7 @@ The last model (LocalPointNet3) takes a slightly different approach. Instead of 
 
 ## results
 
-![alt text](https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/%E2%80%8F%E2%80%8Ftable%20results.JPG) 
+![alt text](https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/%E2%80%8F%E2%80%8Ftable%20results.jpg) 
 
 visualization of the results:
 
