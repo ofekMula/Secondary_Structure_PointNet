@@ -14,13 +14,9 @@ Also has applications in drug development.
 
 ## Running the project
 You welcome to enter Running_Pointnet_Final_git.ipynb notebook (in the google colab platform),
-which you can find it <a href="https://colab.research.google.com/github/ofekMula/Secondary_Structure_PointNet/blob/final_project/Running_Pointnet_Final_git.ipynb" target="_blank"> here.
+There, you will find all the requirements and Instructions for running the project.
+You can find it <a href="https://colab.research.google.com/github/ofekMula/Secondary_Structure_PointNet/blob/final_project/Running_Pointnet_Final_git.ipynb" target="_blank"> here.
 
-There, you will find all the requirements and Instructions for running the project:
-- preparing the database
-- the training procedure
-- the test procedure
-- visualization of the result
 
 ## Background on proteins
 A protein is a molecule made of a folded chain of amino acids, linked together by peptide bonds. Those bonds are established between the carboxyl group of the amino acid and the amino group of the other acid. All proteins are constructed of the same building blocks, amino acids.
