@@ -12,6 +12,15 @@ The main objective of it was to examine whether PointNet architecture is good en
 The problem of predicting the secondary structure of each amino acid is considered highly important in the structural biology field, due to its immense effects on the understanding of protein structure: the secondary structure provides a higher level of understanding of how a protein works. This can allow researchers to deduce how to affect, control and modify the functionality of a protein; and also lead to more precise results in related research (e.g. protein-protein docking).
 Also has applications in drug development.
 
+## Running the project
+You welcome to enter Running_Pointnet_Final_git.ipynb notebook (in the google colab platform),
+which you can find it here in the git repository.
+there, you will find all the requirements and Instructions for running the project:
+- preparing the database
+- the training procedure
+- the test procedure
+- visualization of the result
+
 ## Background on proteins
 A protein is a molecule made of a folded chain of amino acids, linked together by peptide bonds. Those bonds are established between the carboxyl group of the amino acid and the amino group of the other acid. All proteins are constructed of the same building blocks, amino acids.
 The function of a protein depends significantly on the strength of its structure, and this structure is obtained by the exact list of amino acids that construct it. Each protein folds in space into a three-dimensional shape, as a result of chemical bonds between the various amino acids.
