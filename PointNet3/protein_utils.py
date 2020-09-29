@@ -163,7 +163,7 @@ def save_numpy_files_from_proteins(list_of_pdbs, number_of_proteins):
 
 
         ##Now creating the file
-        protein_file_name = + pdb_name + '_' + num_chain
+        protein_file_name =  pdb_name + '_' + num_chain
         structure, chain_prot = download_and_parse_pdb(pdb_name, num_chain)
         if (isinstance(structure, int)):
           print("ERROR: pdb not found")
