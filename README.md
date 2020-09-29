@@ -51,14 +51,14 @@ The basic model (PointNet8) is as described above - semantic segmentation of eac
 The second model (PointNet3) works the same - but classify each point into one of the 3 main classes described above (helices, sheets and loops). Using this model, we hope to “ignore” the small differences between different types of DSSP types in the same “main class” (for example, the difference between a 4-turn helix and a 5-turn helix).
 The last model (LocalPointNet3) takes a slightly different approach. Instead of using the entire protein as an input, we take a small neighborhood of each residue (for instance, the 16 closest residues). This neighborhood is normalized and then sent as an input to the classification network - and classified into one of the 3 main classes. The motivation for that model was described in the introduction for this paper - points in the same neighborhood are most likely to have a similar secondary structure.
 
-## results
+## Results
 ![alt text](https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/%E2%80%8F%E2%80%8Ftable%20results.jpg) 
 
 visualization of the results:
 
 ![alt text](https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/prediction_results.jpg) 
 
-## future work
+## Future work
 We propose here different suggestions for future improvements for our models.
 1. Constructing the database from the backbone coordinates of each residue (we took only the carbon-alpha coordinates).
 
