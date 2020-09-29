@@ -14,8 +14,9 @@ Also has applications in drug development.
 
 ## Running the project
 You welcome to enter Running_Pointnet_Final_git.ipynb notebook (in the google colab platform),
-which you can find it here in the git repository.
-there, you will find all the requirements and Instructions for running the project:
+which you can find it <a href="https://colab.research.google.com/github/ofekMula/Secondary_Structure_PointNet/blob/final_project/Running_Pointnet_Final_git.ipynb" target="_blank"> here.
+
+There, you will find all the requirements and Instructions for running the project:
 - preparing the database
 - the training procedure
 - the test procedure
