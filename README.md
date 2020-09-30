@@ -7,7 +7,7 @@ protein secondary structure classification using Deep learning with PointNet arc
 
 
 ## Objective
-In this project we deal with classification of amino acids in proteins into their secondary structurewith deep learning by using PointNet architecture.
+In this project we deal with classification of amino acids in proteins into their secondary structure with deep learning by using PointNet architecture.
 The main objective of it was to examine whether PointNet architecture is good enough for that task, and also to compare between three different variants of it.
 The problem of predicting the secondary structure of each amino acid is considered highly important in the structural biology field, due to its immense effects on the understanding of protein structure: the secondary structure provides a higher level of understanding of how a protein works. This can allow researchers to deduce how to affect, control and modify the functionality of a protein; and also lead to more precise results in related research (e.g. protein-protein docking).
 Also has applications in drug development.
