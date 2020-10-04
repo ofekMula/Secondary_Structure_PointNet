@@ -57,7 +57,9 @@ The last model (LocalPointNet3) takes a slightly different approach. Instead of 
 visualization of the results:
 
 Helix - blue color
+
 Sheet - Yellow color
+
 loops - Red color
 ![alt text](https://github.com/ofekMula/Secondary_Structure_PointNet/blob/final_project/Images/prediction_results.jpg) 
 
